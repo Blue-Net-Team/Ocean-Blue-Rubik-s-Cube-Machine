@@ -1,0 +1,10 @@
+# Windows
+# pip -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+opencv-python
+numpy
+kociemba
+
+# Linux
+# opencv-python
+# numpy
+# kociemba  -> using "sudo apt-get install libffi-dev" to install kociemba
