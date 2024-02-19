@@ -25,3 +25,7 @@ $RECYCLE.BIN/
 
 # virtual environment
 .venv
+
+# IDE
+.idea
+.vscode
