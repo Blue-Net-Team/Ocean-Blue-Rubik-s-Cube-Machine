@@ -1,8 +1,8 @@
-# BlueNet Rubik's Cube Machine
-For theme 2 of the 2024 Intelligent Robot Innovation Competition, a robot that solves Rubik's Cube, aiming for faster speed.
+# 海蓝魔方机
+针对2024年的智能机器人创意大赛的主题2，还原魔方的机器人，追求更快的速度。
 
-## Development Team
- - University: Guangdong Ocean University
- - College: Mechanical Engineering
- - Team Name: BlueNet Technology Innovation Team
- - Team Members:
+## 开发团队
+ - 院校：广东海洋大学
+ - 所属学院：机械工程学院
+ - 团队名称：蓝网科技创新团队
+ - 队伍成员：
