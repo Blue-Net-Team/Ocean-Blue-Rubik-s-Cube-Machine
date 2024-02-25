@@ -6,3 +6,7 @@ For theme 2 of the 2024 Intelligent Robot Innovation Competition, a robot that s
  - College: Mechanical Engineering
  - Team Name: BlueNet Technology Innovation Team
  - Team Members:
+    - vision：许凯杰，何云峰
+    - algorithm：何云峰
+    - electronic control：何云峰
+    - structure：吉泧均，何云峰
