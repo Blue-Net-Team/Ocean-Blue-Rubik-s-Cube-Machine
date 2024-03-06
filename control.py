@@ -1,3 +1,4 @@
+from cv2 import sepFilter2D
 import RPi.GPIO as GPIO
 import time
 
@@ -14,6 +15,7 @@ import time
 初始状态，左侧手指夹持面6，右侧手指夹持面2
 """
 
+GPIO.setmode(GPIO.BCM)
 serface:list = [5, 1, 3, 2, 4, 6] # 魔方的6个面
 
 class SteppingMotor:
@@ -27,7 +29,6 @@ class SteppingMotor:
         self.step = step_pin
         self.dir = dir_pin
         self.en = en_pin
-        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.step, GPIO.OUT)
         GPIO.setup(self.dir, GPIO.OUT)
         GPIO.output(self.step, GPIO.LOW)
