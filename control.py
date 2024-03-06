@@ -47,3 +47,22 @@ class SteppingMotor:
             time.sleep(0.001)
             GPIO.output(self.step, GPIO.LOW)
             time.sleep(0.001)
+
+
+class ClampCylinder:
+    """气缸夹爪"""
+    def __init__(self, Pin) -> None:
+        """气缸夹爪的初始化
+        ----
+        * Pin: 气缸夹爪的控制引脚，输出高电平时夹爪闭合"""
+        self.pin = Pin
+        GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.output(self.pin, GPIO.LOW)
+
+    def close(self):
+        """气缸夹爪闭合"""
+        GPIO.output(self.pin, GPIO.HIGH)
+
+    def open(self):
+        """气缸夹爪张开"""
+        GPIO.output(self.pin, GPIO.LOW)
