@@ -20,7 +20,7 @@ serface:list = [5, 1, 3, 2, 4, 6] # 魔方的6个面
 
 class SteppingMotor:
     """步进电机"""
-    def __init__(self, step_pin, dir_pin, en_pin=None):
+    def __init__(self, step_pin, dir_pin, en_pin):
         """步进电机的初始化
         ----
         * step_pin: 步进电机的步进引脚，提供脉冲信号
@@ -31,8 +31,10 @@ class SteppingMotor:
         self.en = en_pin
         GPIO.setup(self.step, GPIO.OUT)
         GPIO.setup(self.dir, GPIO.OUT)
+        GPIO.setup(self.en, GPIO.OUT)
         GPIO.output(self.step, GPIO.LOW)
         GPIO.output(self.dir, GPIO.LOW)
+        GPIO.output(self.en, GPIO.HIGH)
 
     def move(self, angle, reverse=False):
         """步进电机转动
