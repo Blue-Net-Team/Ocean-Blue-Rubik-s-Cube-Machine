@@ -1,4 +1,3 @@
-from cv2 import sepFilter2D
 import RPi.GPIO as GPIO
 import time
 
@@ -15,6 +14,7 @@ import time
 初始状态，左侧手指夹持面6，右侧手指夹持面2
 """
 
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 serface:list = [5, 1, 3, 2, 4, 6] # 魔方的6个面
 
@@ -33,22 +33,22 @@ class SteppingMotor:
         GPIO.setup(self.dir, GPIO.OUT)
         GPIO.setup(self.en, GPIO.OUT)
         GPIO.output(self.step, GPIO.LOW)
-        GPIO.output(self.dir, GPIO.LOW)
+        GPIO.output(self.dir, GPIO.HIGH)
         GPIO.output(self.en, GPIO.HIGH)
 
-    def move(self, angle, reverse=False):
+    def move(self, cycle, reverse=False):
         """步进电机转动
         ----
-        * angle: 转动的角度
+        * cycle: 转动的圈数
         * reverse: 是否反向转动，默认为False(正向转动)"""
         if reverse:
-            GPIO.output(self.dir, GPIO.HIGH)
-        steps = int(angle/1.8)
+            GPIO.output(self.dir, GPIO.LOW)
+        steps = int(cycle*3200)
         for i in range(steps):
             GPIO.output(self.step, GPIO.HIGH)
-            time.sleep(0.001)
+            time.sleep(0.00001)
             GPIO.output(self.step, GPIO.LOW)
-            time.sleep(0.001)
+            time.sleep(0.00001)
 
 
 class ClampCylinder:
@@ -72,4 +72,4 @@ class ClampCylinder:
 
 if __name__ == '__main__':
     motor = SteppingMotor(27, 22, 17)
-    motor.move(90, reverse=True)
+    motor.move(1)
