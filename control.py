@@ -66,3 +66,8 @@ class ClampCylinder:
     def open(self):
         """气缸夹爪张开"""
         GPIO.output(self.pin, GPIO.LOW)
+
+
+if __name__ == '__main__':
+    motor = SteppingMotor(27, 22, 17)
+    motor.move(90, reverse=True)
