@@ -3,8 +3,10 @@
 opencv-python
 numpy
 kociemba
+twophase
 
 # Linux
 # opencv-python
 # numpy
 # kociemba  -> using "sudo apt-get install libffi-dev" to install kociemba
+# twophase  -> "pip install RubikTwoPhase"
