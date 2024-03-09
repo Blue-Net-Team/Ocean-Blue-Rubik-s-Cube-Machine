@@ -4,13 +4,14 @@ import time
 import arm_planning
 import kociemba
 
-#解算魔方
+
 def cube_solver(view_state):
+    """魔方求解"""
     solve_step = sv.solve(view_state,0,0.05)
     return solve_step    
 
-#将SVM识别的颜色状态转换成视角状态，blue:U green:D yellow:F white:B orange:R red:L 意思是中心块颜色固定位置，与视角绑定
 def color2view(color_state):
+    """将SVM识别的颜色状态转换成视角状态，blue:U green:D yellow:F white:B orange:R red:L 意思是中心块颜色固定位置，与视角绑定"""
     _color_state = ''
     for i in color_state:
         if i == 'B':
@@ -27,18 +28,20 @@ def color2view(color_state):
             _color_state = _color_state + 'R'
     return _color_state
 
-#左手抓down，右手抓back，最优路径搜索(算法优化,原理是在转L,R面时判断是转到左手还是右手)
-def _SolutionTransAndOptimize(Solution):#以这样的抓法，正对自己的是R,背后是L,右上是U,左上是F
+
+def _SolutionTransAndOptimize(Solution):        #以这样的抓法，正对自己的是R,背后是L,右上是U,左上是F
+    """二叉树搜索最优路径，算法优化,原理是在转L,R面时判断是转到左手还是右手
+    左手抓down，右手抓back"""
     standard_state = 'UDFBRL'
-    transtable = {'U' :('DUFBLR',0.4),#U U->D D->U L->R R->L  R 180 degree
+    transtable = {'U' :('DUFBLR',0.4),      #U U->D D->U L->R R->L  R 180 degree
                   'D' :('UDFBRL',0),
-                  'F' :('UDBFLR',0.4),#F F->B B->F L->R R->L  L 180 degree
+                  'F' :('UDBFLR',0.4),      #F F->B B->F L->R R->L  L 180 degree
 
-                  'I' :('RLFBDU',0.6),#L L->D D->R R->U U->L  R_a 90 degree
-                  'l' :('UDRLBF',0.6),#l L->B B->R R->F F->L  L_c 90 degree
+                  'I' :('RLFBDU',0.6),      #L L->D D->R R->U U->L  R_a 90 degree
+                  'l' :('UDRLBF',0.6),      #l L->B B->R R->F F->L  L_c 90 degree
 
-                  'Z' :('LRFBUD',0.6),#R R->D D->L L->U U->R  R_c 90 degree
-                  'r' :('UDLRFB',0.6),#r R->B B->L L->F F->R  L_a 90 degree
+                  'Z' :('LRFBUD',0.6),      #R R->D D->L L->U U->R  R_c 90 degree
+                  'r' :('UDLRFB',0.6),      #r R->B B->L L->F F->R  L_a 90 degree
                   'B' :('UDFBRL',0)}
     cost = 0
     cost_l = 0
@@ -109,7 +112,7 @@ def _SolutionTransAndOptimize(Solution):#以这样的抓法，正对自己的是
 
 #blue:U green:D yellow:F white:B orange:R red:L 
 def test():
-    #生成随机魔方状态用于解算
+    """生成随机魔方状态用于解算"""
     cc = cubie.CubieCube()
     cnt = [0] * 31
     cc.randomize()
