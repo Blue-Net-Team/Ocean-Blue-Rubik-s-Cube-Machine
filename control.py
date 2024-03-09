@@ -1,22 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
-"""魔方面结构的定义：
-----
-      ——————
-      |  5  |
-—————————————————————————
-|  1  |  3  |  2  |  4  |
-—————————————————————————
-      |  6  |
-      ———————
-
-初始状态，左侧手指夹持面6，右侧手指夹持面2
-"""
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-serface:list = [5, 1, 3, 2, 4, 6] # 魔方的6个面
 
 class SteppingMotor:
     """步进电机"""
