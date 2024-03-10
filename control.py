@@ -33,10 +33,12 @@ class SteppingMotor:
         steps = int(cycle*3200)
         for i in range(steps):
             GPIO.output(self.step, GPIO.HIGH)
-            time.sleep(0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001)
+            for i in range(100):
+                pass
             GPIO.output(self.step, GPIO.LOW)
-            time.sleep(0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001)
-
+            for i in range(100):
+                pass
+  
 
 class ClampCylinder:
     """气缸夹爪"""
