@@ -33,10 +33,10 @@ class SteppingMotor:
         steps = int(cycle*3200)
         for i in range(steps):
             GPIO.output(self.step, GPIO.HIGH)
-            for i in range(100):
+            for i in range(50):
                 pass
             GPIO.output(self.step, GPIO.LOW)
-            for i in range(100):
+            for i in range(50):
                 pass
   
 
