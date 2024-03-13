@@ -19,9 +19,9 @@
  - 开发语言：Python
 
 ## 参考
-1.  SVM识别方案，参考教程：https://blog.csdn.net/lemonbit/article/details/117004167
-2.  魔方解算算法，参考教程：https://github.com/hkociemba/RubiksCube-TwophaseSolver
-3.  机械臂规划算法，参考教程：https://gitee.com/harry-fan/rubiks-cube-robot/tree/master
+1.  [SVM识别方案](https://blog.csdn.net/lemonbit/article/details/117004167)
+2.  [魔方解算算法](https://github.com/hkociemba/RubiksCube-TwophaseSolver)
+3.  [机械臂规划算法](https://gitee.com/harry-fan/rubiks-cube-robot/tree/master)
 
 ## 介绍
 本魔方机器人采用双爪八字布局，4个摄像头，两个步进电机，气滑环，以及夹爪气缸。通过空压机给气罐充气，撤除空压机，将魔方放在托架后，按下启动按钮，夹爪闭合，开始还原魔方。
