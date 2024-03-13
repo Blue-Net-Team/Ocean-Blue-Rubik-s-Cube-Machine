@@ -1,14 +1,14 @@
 # 海蓝魔方机
-针对2024年的智能机器人创意大赛的主题2，还原魔方的机器人，追求更快的速度。
+针对2024年的[中国高校智能机器人创意大赛](https://www.robotcontest.cn/datacenter/news/detail?id=6292)的主题2，还原魔方的机器人，追求更快的速度。
 
 ## 开发团队
  - 院校：广东海洋大学
  - 所属学院：机械工程学院
- - 团队名称：蓝网科技创新团队
+ - 团队名称：[蓝网科技创新团队](https://gitee.com/blue-net-vision)
  - 队伍成员：
-    - 视觉：许凯杰，何云峰
-    - 算法：许凯杰
-    - 电控：何云峰
+    - 视觉：[许凯杰](https://gitee.com/d-vision)，[何云峰](https://gitee.com/iven_he)
+    - 算法：[许凯杰](https://gitee.com/d-vision)
+    - 电控：[何云峰](https://gitee.com/iven_he)
     - 结构：吉泧均，何云峰
 
 ## 开发平台
