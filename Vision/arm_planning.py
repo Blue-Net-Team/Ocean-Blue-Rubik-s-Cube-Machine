@@ -1,5 +1,8 @@
-#将解算魔方步骤转换成机械臂操作步骤(这里定义了解魔方所有的步骤对应的机械臂操作)
-def planning(command): #1 means clockwise 90 degree
+"""将魔方解算算法转换成机械步骤"""
+
+def planning(command) -> list: 
+    """将解算魔方步骤转换成机械臂操作步骤(这里定义了解魔方所有的步骤对应的机械臂操作)"""
+                       #1 means clockwise 90 degree
                        #2 means 180 degree
                        #3 means anticlockwise 90 degree
                        #O means hand open
