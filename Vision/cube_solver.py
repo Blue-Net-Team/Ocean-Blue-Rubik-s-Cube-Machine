@@ -138,6 +138,7 @@ def test():
 if __name__ == '__main__':  
     solve_step = test()
     _solve_step = solve_step.split()
+    _solve_step = _solve_step[:-1]
     print(solve_step)
     print(_solve_step)
     real_solve, cost = _SolutionTransAndOptimize(_solve_step)
