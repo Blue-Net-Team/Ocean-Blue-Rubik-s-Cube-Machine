@@ -7,7 +7,7 @@ import kociemba
 
 def cube_solver(view_state):
     """魔方求解"""
-    solve_step = sv.solve(view_state,0,0.05)
+    solve_step = kociemba.solve(view_state)
     return solve_step    
 
 def color2view(color_state):
