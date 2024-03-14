@@ -35,6 +35,7 @@ def crack():
     # 解算得到机械臂步骤
     solve_step = cube_solver.cube_solver(color_state)
     _solve_step = solve_step.split()
+    _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)
     # print(solve_step)
