@@ -84,6 +84,7 @@ class Arm:
         * reverse: 是否反向旋转，默认为False(顺时旋转)"""
         self.clamp.open()
         self.motor.move(num, reverse)
+        self.clamp.close()
 
     def open(self):
         """手指张开"""
