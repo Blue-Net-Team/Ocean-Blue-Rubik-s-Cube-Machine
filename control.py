@@ -89,6 +89,10 @@ class Arm:
         """手指张开"""
         self.clamp.open()
 
+    def close(self):
+        """手指闭合"""
+        self.clamp.close()
+
 
 class CubeSolution:
     """魔方解法
@@ -135,6 +139,7 @@ class CubeSolution:
                 _swap(self.cube[0], self.cube[5])
                 _swap(self.cube[4], self.cube[5])
             # endregion
+        self.left_arm.close()           # 左手指闭合
                 
         return self.cube
     
@@ -162,6 +167,7 @@ class CubeSolution:
                 _swap(self.cube[3], self.cube[4])
                 _swap(self.cube[2], self.cube[4])
             # endregion
+        self.right_arm.close()          # 右手指闭合
                 
         return self.cube
 
