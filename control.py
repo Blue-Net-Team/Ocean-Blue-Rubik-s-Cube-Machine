@@ -172,6 +172,19 @@ class CubeSolution:
                 
         return self.cube
 
+    def r_rotate(self, num:int, reverse=False):
+        """右侧旋转
+        ----
+        右侧手指闭合，左侧手闭合，带动魔方旋转
+        * num: 旋转的面数
+        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
+        if num != 1 and num != 2:       # 旋转面数只能为1或2
+            raise ValueError('num must be 1 or 2')
+
+        self.left_arm.close()           # 左手指闭合
+        self.right_arm.close_spin(num/4, reverse=reverse)
+        self.right_arm.open_spin(num/4, reverse=not reverse)
+
 
 if __name__ == '__main__':
     motor = SteppingMotor(27, 22, 17)
