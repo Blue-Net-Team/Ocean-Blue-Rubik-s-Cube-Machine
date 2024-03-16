@@ -137,6 +137,33 @@ class CubeSolution:
             # endregion
                 
         return self.cube
+    
+    def l_slip(self, num:int, reverse=False) -> list:
+        """左侧空转
+        ----
+        左侧手指闭合，右侧手张开，带动魔方空转
+        * num: 旋转的面数
+        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
+        def _swap(a, b):
+            a, b = b, a
+        if num != 1 and num != 2:       # 旋转面数只能为1或2
+            raise ValueError('num must be 1 or 2')
+        self.right_arm.open()           # 右手指张开
+        for i in range(num):
+            self.left_arm.close_spin(num/4, reverse=reverse)
+
+            # region 更新魔方结构的列表
+            if reverse:             # 逆时针旋转
+                _swap(self.cube[4], self.cube[3])
+                _swap(self.cube[2], self.cube[3])
+                _swap(self.cube[1], self.cube[2])
+            else:                   # 顺时针旋转
+                _swap(self.cube[2], self.cube[1])
+                _swap(self.cube[3], self.cube[4])
+                _swap(self.cube[2], self.cube[4])
+            # endregion
+                
+        return self.cube
 
 
 if __name__ == '__main__':
