@@ -111,9 +111,10 @@ class CubeSolution:
         self.cube_dict = {0: 'U', 1: 'D', 2: 'L', 3: 'R', 4: 'F', 5: 'B'}
         self.cube = [0, 2, 4, 3, 5, 1]      # 左机械臂抓持self.cube[5], 右机械臂抓持self.cube[3]
 
-    def r_slip(self, num:int, reverse=False):
+    def r_slip(self, num:int, reverse=False) -> list:
         """右侧空转
         ----
+        右侧手指闭合，左侧手张开，带动魔方空转
         * num: 旋转的面数
         * reverse: 是否反向旋转，默认为False(顺时旋转)"""
         def _swap(a, b):
@@ -134,6 +135,8 @@ class CubeSolution:
                 _swap(self.cube[0], self.cube[5])
                 _swap(self.cube[4], self.cube[5])
             # endregion
+                
+        return self.cube
 
 
 if __name__ == '__main__':
