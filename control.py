@@ -89,6 +89,17 @@ class Arm:
         """手指张开"""
         self.clamp.open()
 
+    def close(self):
+        """手指闭合"""
+        self.clamp.close()
+
+    def rotate(self, num:int, reverse=False):
+        """旋转机械臂
+        ----
+        * num: 旋转的圈数
+        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
+        self.motor.move(num, reverse)
+
 if __name__ == '__main__':
     motor = SteppingMotor(27, 22, 17)
     motor.move(1)
