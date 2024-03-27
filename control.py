@@ -199,6 +199,17 @@ class CubeSolution:
         self.left_arm.open_spin(num/4, reverse=not reverse)
 
 
+class steeringEngine:
+    def __init__(self, pin) -> None:
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+        self.pwm = GPIO.PWM(self.pin, 50)
+        self.pwm.start(0)
+
+    def set_angle(self, angle):
+        self.pwm.ChangeDutyCycle(100*angle/180)
+
+        
 if __name__ == '__main__':
     motor = SteppingMotor(27, 22, 17)
     motor.move(1)
