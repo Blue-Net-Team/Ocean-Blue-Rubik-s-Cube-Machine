@@ -1,222 +1,77 @@
-import RPi.GPIO as GPIO
-import time
+from machine import Pin
 
-
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
 
 class SteppingMotor:
     """步进电机"""
-    def __init__(self, step_pin, dir_pin, en_pin):
-        """步进电机的初始化
-        ----
-        * step_pin: 步进电机的步进引脚，提供脉冲信号
-        * dir_pin: 步进电机的方向引脚，提供方向信号
-        * en_pin: 步进电机的使能引脚，可选，默认为None"""
-        self.step = step_pin
-        self.dir = dir_pin
-        self.en = en_pin
-        GPIO.setup(self.step, GPIO.OUT)
-        GPIO.setup(self.dir, GPIO.OUT)
-        GPIO.setup(self.en, GPIO.OUT)
-        GPIO.output(self.step, GPIO.LOW)
-        GPIO.output(self.dir, GPIO.HIGH)
-        GPIO.output(self.en, GPIO.HIGH)
+    def __init__(self, stp, en, dir) -> None:
+        """步进电机初始化
+        * stp: 步进电机的步进脚
+        * en: 步进电机的使能脚
+        * dir: 步进电机的方向脚
+        """
+        self.stp = Pin(stp, Pin.OUT)
+        self.en = Pin(en, Pin.OUT)
+        self.dir = Pin(dir, Pin.OUT)
+        self.en.value(1)
+        pass
 
-    def move(self, cycle, reverse=False):
+    def rotate(self, circle, direction=1, _stop=0):
         """步进电机转动
-        ----
-        * cycle: 转动的圈数
-        * reverse: 是否反向转动，默认为False(正向转动)"""
-        if reverse:
-            GPIO.output(self.dir, GPIO.LOW)
-        steps = int(cycle*3200)
-        for i in range(steps):
-            GPIO.output(self.step, GPIO.HIGH)
-            for i in range(50):
-                pass
-            GPIO.output(self.step, GPIO.LOW)
-            for i in range(50):
-                pass
-  
+        * circle: 转动圈数
+        * direction: 转动方向
+        * _stop: 步进间隔
+        """
+        self.dir.value(direction)
+        for i in range(3200 * circle):
+            self.stp.value(1)
+            for _ in range(_stop):pass
+            self.stp.value(0)
+            for _ in range(_stop):pass
+        pass
+
 
 class ClampCylinder:
     """气缸夹爪"""
-    def __init__(self, Pin) -> None:
-        """气缸夹爪的初始化
-        ----
-        * Pin: 气缸夹爪的控制引脚，输出高电平时夹爪闭合"""
-        self.pin = Pin
-        GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.LOW)
-
-    def close(self):
-        """气缸夹爪闭合"""
-        GPIO.output(self.pin, GPIO.HIGH)
+    def __init__(self,_pin) -> None:
+        self.pin = Pin(_pin, Pin.OUT)
+        pass
 
     def open(self):
-        """气缸夹爪张开"""
-        GPIO.output(self.pin, GPIO.LOW)
-
-
-class Arm:
-    """机械臂"""
-    def __init__(self, clamp:ClampCylinder, motor:SteppingMotor) -> None:
-        """机械臂的初始化
-        ----
-        * clamp: 手臂的夹爪
-        * motor: 步进电机"""
-        self.clamp:ClampCylinder = clamp
-        self.motor:SteppingMotor = motor
-
-    def close_spin(self, num:int|float, reverse=False):
-        """机械臂闭合并旋转 -> 转动魔方
-        ----
-        * num: 旋转的圈数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        self.clamp.close()
-        self.motor.move(num, reverse)
-
-    def open_spin(self, num:int|float, reverse=False):
-        """机械臂张开并旋转 -> 手指归位
-        ----
-        * num: 旋转的圈数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        self.clamp.open()
-        self.motor.move(num, reverse)
-        self.clamp.close()
-
-    def open(self):
-        """手指张开"""
-        self.clamp.open()
-
-    def rotate(self, num:int, reverse=False):
-        """旋转机械臂
-        ----
-        * num: 旋转的圈数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        self.motor.move(num, reverse)
+        self.pin.value(1)
+        pass
 
     def close(self):
-        """手指闭合"""
-        self.clamp.close()
+        self.pin.value(0)
+        pass
 
 
-class CubeSolution:
-    """魔方解法
-    ----
-    魔方结构定义：
-          _______
-          |  0  |
-    ______|__U__|___________
-    |  2  |  4  |  3  |  5  |
-    |__L__|__F__|__R__|__B__|
-          |  1  |
-          |__D__|
+class Control:
+    def __init__(self, _motor:SteppingMotor, _cylinder:ClampCylinder) -> None:
+        self.motor = _motor
+        self.cylinder = _cylinder
+        pass
+
+    def rotate(self, circle, direction=1, _stop=0):
+        self.motor.rotate(circle, direction, _stop)
+        pass
+
+    def open(self):
+        self.cylinder.open()
+        pass
+
+    def close(self):
+        self.cylinder.close()
+        pass
     
-    机械臂抓持D,R
-    """
-    def __init__(self, left_arm:Arm, right_arm:Arm) -> None:
-        self.left_arm = left_arm
-        self.right_arm = right_arm
 
-        self.cube_dict = {0: 'U', 1: 'D', 2: 'L', 3: 'R', 4: 'F', 5: 'B'}
-        self.cube = [0, 2, 4, 3, 5, 1]      # 左机械臂抓持self.cube[5], 右机械臂抓持self.cube[3]
+if __name__ == "__main__":
+    #region 电机测试
+    motor = SteppingMotor(13, 12, 14)
+    motor.rotate(1, 1, 0)
+    #endregion
 
-    def r_slip(self, num:int, reverse=False) -> list:
-        """右侧空转
-        ----
-        右侧手指闭合，左侧手张开，带动魔方空转
-        * num: 旋转的面数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        def _swap(a, b):
-            a, b = b, a
-        if num != 1 and num != 2:       # 旋转面数只能为1或2
-            raise ValueError('num must be 1 or 2')
-        self.left_arm.open()            # 左手指张开
-        for i in range(num):
-            self.right_arm.close_spin(num/4, reverse=reverse)
-
-            # region 更新魔方结构的列表
-            if reverse:             # 逆时针旋转
-                _swap(self.cube[4], self.cube[5])
-                _swap(self.cube[2], self.cube[5])
-                _swap(self.cube[0], self.cube[2])
-            else:                   # 顺时针旋转
-                _swap(self.cube[2], self.cube[5])
-                _swap(self.cube[0], self.cube[5])
-                _swap(self.cube[4], self.cube[5])
-            # endregion
-        self.left_arm.close()           # 左手指闭合
-                
-        return self.cube
-    
-    def l_slip(self, num:int, reverse=False) -> list:
-        """左侧空转
-        ----
-        左侧手指闭合，右侧手张开，带动魔方空转
-        * num: 旋转的面数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        def _swap(a, b):
-            a, b = b, a
-        if num != 1 and num != 2:       # 旋转面数只能为1或2
-            raise ValueError('num must be 1 or 2')
-        self.right_arm.open()           # 右手指张开
-        for i in range(num):
-            self.left_arm.close_spin(num/4, reverse=reverse)
-
-            # region 更新魔方结构的列表
-            if reverse:             # 逆时针旋转
-                _swap(self.cube[4], self.cube[3])
-                _swap(self.cube[2], self.cube[3])
-                _swap(self.cube[1], self.cube[2])
-            else:                   # 顺时针旋转
-                _swap(self.cube[2], self.cube[1])
-                _swap(self.cube[3], self.cube[4])
-                _swap(self.cube[2], self.cube[4])
-            # endregion
-        self.right_arm.close()          # 右手指闭合
-                
-        return self.cube
-
-    def r_rotate(self, num:int, reverse=False):
-        """右侧旋转
-        ----
-        右侧手指闭合，左侧手闭合，带动魔方旋转
-        * num: 旋转的面数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        if num != 1 and num != 2:       # 旋转面数只能为1或2
-            raise ValueError('num must be 1 or 2')
-
-        self.left_arm.close()           # 左手指闭合
-        self.right_arm.close_spin(num/4, reverse=reverse)
-        self.right_arm.open_spin(num/4, reverse=not reverse)
-
-    def l_rotate(self, num:int, reverse=False):
-        """左侧旋转
-        ----
-        左侧手指闭合，右侧手闭合，带动魔方旋转
-        * num: 旋转的面数
-        * reverse: 是否反向旋转，默认为False(顺时旋转)"""
-        if num != 1 and num != 2:       # 旋转面数只能为1或2
-            raise ValueError('num must be 1 or 2')
-
-        self.right_arm.close()          # 右手指闭合
-        self.left_arm.close_spin(num/4, reverse=reverse)
-        self.left_arm.open_spin(num/4, reverse=not reverse)
-
-
-class steeringEngine:
-    def __init__(self, pin) -> None:
-        self.pin = pin
-        GPIO.setup(self.pin, GPIO.OUT)
-        self.pwm = GPIO.PWM(self.pin, 50)
-        self.pwm.start(0)
-
-    def set_angle(self, angle):
-        self.pwm.ChangeDutyCycle(100*angle/180)
-
-        
-if __name__ == '__main__':
-    motor = SteppingMotor(27, 22, 17)
-    motor.move(1)
+    # #region 气缸测试
+    # cylinder = ClampCylinder(15)
+    # cylinder.open()
+    # cylinder.close()
+    # #endregion
