@@ -9,7 +9,7 @@ def cube_solver(view_state):
     solve_step = sv.solve(view_state,0,0.05)
     return solve_step   
 
-#将SVM识别的颜色状态转换成视角状态，blue:U green:D yellow:L white:R orange:B red:F 意思是中心块颜色固定位置，与视角绑定
+#将SVM识别的颜色状态转换成视角状态，blue:U green:D yellow:L white:R orange:F red:B 意思是中心块颜色固定位置，与视角绑定
 def color2view(color_state):
     _color_state = ''
     for i in color_state:
@@ -22,9 +22,9 @@ def color2view(color_state):
         elif i == 'W':
             _color_state = _color_state + 'R'
         elif i == 'R':
-            _color_state = _color_state + 'F'
-        elif i == 'O':
             _color_state = _color_state + 'B'
+        elif i == 'O':
+            _color_state = _color_state + 'F'
     return _color_state
 
 #左手抓down，右手抓back，最优路径搜索(算法优化,原理是在转L,R面时判断是转到左手还是右手,L在背面)
