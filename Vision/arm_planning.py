@@ -1,8 +1,5 @@
-"""将魔方解算算法转换成机械步骤"""
-
-def planning(command) -> list: 
-    """将解算魔方步骤转换成机械臂操作步骤(这里定义了解魔方所有的步骤对应的机械臂操作)"""
-                       #1 means clockwise 90 degree
+#将解算魔方步骤转换成机械臂操作步骤(这里定义了解魔方所有的步骤对应的机械臂操作)
+def planning(command): #1 means clockwise 90 degree
                        #2 means 180 degree
                        #3 means anticlockwise 90 degree
                        #O means hand open
@@ -50,7 +47,7 @@ def planning(command) -> list:
     arm_step = arm_step.split()
     _arm_step = []
 
-    #优化操作步骤
+    #优化操作步骤,如出现LC,LO或者RC,RO,则直接跳到LO或RO
     num = 0
     while(num < len(arm_step) - 1):
         if(arm_step[num] == 'LC' and arm_step[num + 1] == 'LO'):
@@ -65,3 +62,4 @@ def planning(command) -> list:
 
 if __name__ == '__main__': 
     planning(['F2', 'D2', 'R3', 'R2', 'B2', 'r1', 'r2', 'r1', 'F2', 'D1', 'L2', 'F1', 'F2', 'U1', 'F2', 'F3', 'U3', 'l3', 'U1'])
+ 
