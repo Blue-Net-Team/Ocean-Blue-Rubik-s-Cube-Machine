@@ -1,9 +1,10 @@
+from machine import UART
 from machine import Pin
 
 
 class SteppingMotor:
     """步进电机"""
-    def __init__(self, stp, en, dir) -> None:
+    def __init__(self, stp, en, _dir) -> None:
         """步进电机初始化
         * stp: 步进电机的步进脚
         * en: 步进电机的使能脚
@@ -11,7 +12,7 @@ class SteppingMotor:
         """
         self.stp = Pin(stp, Pin.OUT)
         self.en = Pin(en, Pin.OUT)
-        self.dir = Pin(dir, Pin.OUT)
+        self.dir = Pin(_dir, Pin.OUT)
         self.en.value(1)
         pass
 
@@ -51,7 +52,28 @@ class Control:
         self.cylinder = _cylinder
         pass
 
-    def rotate(self, circle, direction=1, _stop=0):
+    def rotate(self, sign:str, _stop=0):
+        """旋转 
+        * sign: 旋转信号
+                1 means clockwise 90 degree
+                2 means 180 degree
+                3 means anticlockwise 90 degree
+        * _stop: 步进间隔"""
+        if sign == "1":
+            circle = 0.25
+            direction = 1
+
+        elif sign == "2":
+            circle = 0.25
+            direction = 0
+
+        elif sign == "3":
+            circle = 0.5
+            direction = 0
+
+        else:
+            raise ValueError("Invalid sign")
+        
         self.motor.rotate(circle, direction, _stop)
         pass
 
@@ -64,14 +86,68 @@ class Control:
         pass
     
 
-if __name__ == "__main__":
-    #region 电机测试
-    motor = SteppingMotor(13, 12, 14)
-    motor.rotate(1, 1, 0)
-    #endregion
+uart = UART(baudrate=9600, tx=8, rx=7)
 
-    # #region 气缸测试
-    # cylinder = ClampCylinder(15)
-    # cylinder.open()
-    # cylinder.close()
-    # #endregion
+def restore():
+    """还原"""
+    if p5.value() == 1:
+        led.value(0)        # 就绪指示灯熄灭
+        for _sign in str_data:
+            sign1 = _sign[0]        # L or R
+            sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
+            if sign1 == "L":
+                motor = left_motor
+                cylinder = left_cylinder
+                if sign2 == "O":
+                    cylinder.open()
+                elif sign2 == "C":
+                    cylinder.close()
+                elif sign2 in ["1", "2", "3"]:
+                    motor.rotate(sign2)
+            elif sign1 == "R":
+                motor = right_motor
+                cylinder = right_cylinder
+                if sign2 == "O":
+                    cylinder.open()
+                elif sign2 == "C":
+                    cylinder.close()
+                elif sign2 in ["1", "2", "3"]:
+                    motor.rotate(sign2)
+
+
+if __name__ == "__main__":
+    # region 创建对象
+    left_motor = SteppingMotor(47, 48, 38)
+    right_motor = SteppingMotor(40, 39, 21)
+
+    left_cylinder = ClampCylinder(17)
+    right_cylinder = ClampCylinder(16)
+
+    led = Pin(9, Pin.OUT)
+
+    p6 = Pin(6, Pin.OUT, value=0) # 初始化GPIO6
+    p5 = Pin(5, Pin.IN, Pin.PULL_DOWN) # 初始化GPIO5,设置拉低电阻
+    p5.irq(restore, Pin.IRQ_RISING) # GPIO38设置上升沿触发中断
+    # endregion 
+
+    # region 接收信号
+    PACKET_HEAD = b'@'
+    PACKET_TAIL = b'#'
+
+    data = b''  # 用于存储接收到的数据
+
+    while True:
+        byte = uart.read(2)
+        if byte == b'' or byte is None:
+            continue
+        if byte == PACKET_HEAD:
+            data = b''
+        data += byte
+        if byte == PACKET_TAIL:
+            led.value(1)        # 就绪指示灯亮起
+            break
+    str_data = data[1:-1].decode()
+    # endregion
+
+    while True:
+        p6.on()
