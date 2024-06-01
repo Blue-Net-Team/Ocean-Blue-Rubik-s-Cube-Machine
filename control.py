@@ -98,21 +98,22 @@ def restore():
             if sign1 == "L":
                 motor = left_motor
                 cylinder = left_cylinder
-                if sign2 == "O":
-                    cylinder.open()
-                elif sign2 == "C":
-                    cylinder.close()
-                elif sign2 in ["1", "2", "3"]:
-                    motor.rotate(sign2)
+                
             elif sign1 == "R":
                 motor = right_motor
                 cylinder = right_cylinder
-                if sign2 == "O":
-                    cylinder.open()
-                elif sign2 == "C":
-                    cylinder.close()
-                elif sign2 in ["1", "2", "3"]:
-                    motor.rotate(sign2)
+
+            else:
+                raise ValueError("Invalid sign")
+
+            if sign2 == "O":
+                cylinder.open()
+            elif sign2 == "C":
+                cylinder.close()
+            elif sign2 in ["1", "2", "3"]:
+                motor.rotate(sign2)
+            else:
+                raise ValueError("Invalid sign")
 
 
 if __name__ == "__main__":
