@@ -1,31 +1,39 @@
 # 海蓝魔方机
+
 针对2024年的[中国高校智能机器人创意大赛](https://www.robotcontest.cn/datacenter/news/detail?id=6292)的主题2，还原魔方的机器人，追求更快的速度。
 
 ## 开发团队
- - 院校：广东海洋大学
- - 所属学院：机械工程学院
- - 团队名称：[蓝网科技创新团队](https://gitee.com/blue-net-vision)
- - 队伍成员：
-    - 视觉：[许凯杰](https://gitee.com/d-vision)，[何云峰](https://gitee.com/iven_he)
-    - 算法：[许凯杰](https://gitee.com/d-vision)
-    - 电控：[何云峰](https://gitee.com/iven_he)
-    - 结构：吉泧均，何云峰
+
+- 院校：广东海洋大学
+- 所属学院：机械工程学院
+- 团队名称：[蓝网科技创新团队](https://gitee.com/blue-net-vision)
+- 队伍成员：
+  - 视觉：[许凯杰](https://gitee.com/d-vision)，[何云峰](https://gitee.com/iven_he)
+  - 算法：[许凯杰](https://gitee.com/d-vision)
+  - 电控：[何云峰](https://gitee.com/iven_he)
+  - 结构：吉泧均，何云峰
 
 ## 开发平台
+
 树莓派4B
 
 ## 开发环境
- - 操作系统：Raspbian
- - 开发语言：Python
+
+- 操作系统：Raspbian
+- 开发语言：Python
 
 ## 参考
-1.  [SVM识别方案](https://blog.csdn.net/lemonbit/article/details/117004167)
-2.  [魔方解算算法](https://github.com/hkociemba/RubiksCube-TwophaseSolver)
-3.  [机械臂规划算法](https://gitee.com/harry-fan/rubiks-cube-robot/tree/master)
+
+1. [SVM识别方案](https://blog.csdn.net/lemonbit/article/details/117004167)
+2. [魔方解算算法](https://github.com/hkociemba/RubiksCube-TwophaseSolver)
+3. [机械臂规划算法](https://gitee.com/harry-fan/rubiks-cube-robot/tree/master)
 
 ## 介绍
+
 本魔方机器人采用双爪八字布局，4个摄像头，两个步进电机，气滑环，以及夹爪气缸。通过空压机给气罐充气，撤除空压机，将魔方放在托架后，按下启动按钮，夹爪闭合，开始还原魔方。
+
 ### 设备清单
+
 - 树莓派4B
 - 4个摄像头
 - [42步进电机-L40](https://item.taobao.com/item.htm?abbucket=5&id=682797640293&ns=1&spm=a21n57.1.0.0.6903523cZRZY1D&skuId=5057239338765) + [闭环控制器Emm42工业版](https://item.taobao.com/item.htm?abbucket=5&id=673302946671&ns=1&spm=a21n57.1.0.0.6903523cZRZY1D&skuId=5032954871240) *2
