@@ -8,31 +8,7 @@ from vision import color_detect_use2
 from vision import color_detect_use3
 from vision import color_detect_use4
 
-def transform(moves):
-    dic = {
-        'F': 'F1',
-        'F2': 'F2',
-        "F'": 'F3',
-        'R': 'R1',
-        'R2': 'R2',
-        "R\'": 'R3',
-        'U': 'U1',
-        'U2': 'U2',
-        "U\'": 'U3',
-        'B': 'B1',
-        'B2': 'B2',
-        "B\'": 'B3',
-        'L': 'L1',
-        'L2': 'L2',
-        "L\'": 'L3',
-        'D': 'D1',
-        'D2': 'D2',
-        "D\'": 'D3',
-    }
 
-    return [dic[move] for move in moves]
-
-#st = time.perf_counter()
 def crack():
     # 获取魔方颜色状态
     [color_state2,color_state3] = color_detect_use2.detect_color()
@@ -55,13 +31,18 @@ def crack():
     # 解算得到机械臂步骤
     solve_step = cube_solver.cube_solver(color_state)
     _solve_step = solve_step.split()
-    #_solve_step = _solve_step[:-1]
-    _solve_step = transform(_solve_step)
+    _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)
     # print(solve_step)
     # print(arm_step)
     return arm_step
+
+
+
+
+
+
 
 """ et = time.perf_counter()
 time1 = et - st
