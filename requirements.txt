@@ -4,7 +4,7 @@ opencv-python
 numpy
 kociemba
 twophase
-sklean
+scikit-learn
 joblib
 
 # Linux
@@ -12,5 +12,5 @@ joblib
 # numpy
 # kociemba  -> using "sudo apt-get install libffi-dev" to install kociemba
 # twophase  -> "pip install RubikTwoPhase"
-# sklean
+# sscikit-learn
 # joblib
