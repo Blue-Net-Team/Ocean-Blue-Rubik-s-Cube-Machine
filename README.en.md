@@ -20,7 +20,7 @@ ESP32-S3R8N8
 
 ## Development Environment
 
-- Operating System: Raspbian
+- Operating System: Ubuntu
 - Programming Language: Python
 
 ## References
@@ -35,9 +35,14 @@ This Rubik's Cube machine adopts a dual-claw eight-shaped layout, 4 cameras, 2 s
 
 ### Equipment List
 
-- Raspberry Pi 4B
+- NVIDIA jetson nano
+- ESP32-S3R8N8
 - 4 cameras
 - [42 Stepper Motor-L40](https://item.taobao.com/item.htm?abbucket=5&id=682797640293&ns=1&spm=a21n57.1.0.0.6903523cZRZY1D&skuId=5057239338765) + [Closed-loop Controller Emm42 Industrial Version](https://item.taobao.com/item.htm?abbucket=5&id=673302946671&ns=1&spm=a21n57.1.0.0.6903523cZRZY1D&skuId=5032954871240) *2
 - [MHL2-16D Gripper Cylinder](https://item.taobao.com/item.htm?id=537049565191&spm=a1z0d.6639537/tb.1997196601.34.257c7484ZwafTI&skuId=3206052770907) *2
 - [Air Slip Ring 2-way Air Side Outlet M5 Thread](https://detail.tmall.com/item.htm?_u=d2qf50kdb8b2&id=555594152568&skuId=3431370232744) *2
 - Several air pipe connectors
+
+## Introduction
+
+The Jetson Nano, as the upper computer, will use SVM to recognize the colors of the Rubik's Cube's blocks, determine the current state of the Rubik's Cube, and then use the Rubik's Cube solving algorithm to obtain the restoration steps. However, the restoration steps cannot be directly transmitted to the lower computer to control the two robotic arms. The restoration steps need to undergo shortest path calculation to obtain the shortest mechanical steps. These mechanical steps will be sent to the ESP32 of the lower computer, which will control the stepper motors and cylinders to complete the restoration of the Rubik's Cube.
