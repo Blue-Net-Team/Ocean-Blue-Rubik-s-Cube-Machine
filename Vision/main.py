@@ -2,10 +2,11 @@ import cube_solver
 import time
 import arm_planning
 import twophase.cubie as cubie
-from vision import color_detect_use1
-from vision import color_detect_use2
-from vision import color_detect_use3
-from vision import color_detect_use4
+# FIXME: 将下面的模块名更改，更改所有匹配项
+from cam import color_detect_use1
+from cam import color_detect_use2
+from cam import color_detect_use3
+from cam import color_detect_use4
 
 
 def crack():
