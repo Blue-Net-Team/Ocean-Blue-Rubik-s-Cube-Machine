@@ -35,3 +35,4 @@ twophase
 
 # python
 */__pycache__/
+*test*
