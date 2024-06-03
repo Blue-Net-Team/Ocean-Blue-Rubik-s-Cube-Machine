@@ -20,13 +20,14 @@ def crack():
     color_state = cube_solver.color2view(color_state)
     print("color state is:" + color_state)
 
-    # 生成随机魔方状态用于测试机械
+    # region 生成随机魔方状态用于测试机械
     # cc = cubie.CubieCube()
     # cnt = [0] * 31
     # cc.randomize()
     # fc = cc.to_facelet_cube()
     # s = fc.to_string()
     # color_state = s
+    # endregion
 
     # 解算得到机械臂步骤
     solve_step = cube_solver.cube_solver(color_state)
@@ -34,8 +35,6 @@ def crack():
     _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)
-    # print(solve_step)
-    # print(arm_step)
     return arm_step
 
 
