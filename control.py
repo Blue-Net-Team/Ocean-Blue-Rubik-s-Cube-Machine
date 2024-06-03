@@ -46,46 +46,6 @@ class ClampCylinder:
         pass
 
 
-class Control:
-    def __init__(self, _motor:SteppingMotor, _cylinder:ClampCylinder) -> None:
-        self.motor = _motor
-        self.cylinder = _cylinder
-        pass
-
-    def rotate(self, sign:str, _stop=0):
-        """旋转 
-        * sign: 旋转信号
-                1 means clockwise 90 degree
-                2 means 180 degree
-                3 means anticlockwise 90 degree
-        * _stop: 步进间隔"""
-        if sign == "1":
-            circle = 0.25
-            direction = 1
-
-        elif sign == "2":
-            circle = 0.25
-            direction = 0
-
-        elif sign == "3":
-            circle = 0.5
-            direction = 0
-
-        else:
-            raise ValueError("Invalid sign")
-        
-        self.motor.rotate(circle, direction, _stop)
-        pass
-
-    def open(self):
-        self.cylinder.open()
-        pass
-
-    def close(self):
-        self.cylinder.close()
-        pass
-    
-
 uart = UART(baudrate=9600, tx=8, rx=7)
 
 def restore():
