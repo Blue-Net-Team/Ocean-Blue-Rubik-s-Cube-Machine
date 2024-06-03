@@ -13,7 +13,7 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-
+# XXX: 路径可能需要修改
 model_path = '/home/lt/mofang/model/svm_cube_10*10_right4.model'
 img_path = '/home/lt/mofang/view1/test.jpg'
 clf = joblib.load(model_path) # 加载模型
@@ -128,26 +128,6 @@ def detect_color():
  
     et = time.perf_counter()
     print("spent {:.4f}s.".format((et - st)))
-    # plt.subplot(3,3,1)
-    # plt.imshow(ROI1)
-    # plt.subplot(3,3,2)
-    # plt.imshow(ROI2)
-    # plt.subplot(3,3,3)
-    # plt.imshow(ROI3)
-    # plt.subplot(3,3,4)
-    # plt.imshow(ROI4)
-    # plt.subplot(3,3,5)
-    # plt.imshow(ROI5)
-    # plt.subplot(3,3,6)
-    # plt.imshow(ROI6)
-    # plt.subplot(3,3,7)
-    # plt.imshow(ROI7)
-    # plt.subplot(3,3,8)
-    # plt.imshow(ROI8)
-    # plt.subplot(3,3,9)
-    # plt.imshow(ROI9)
-    # plt.imshow(img)
-    # plt.show()
     color_state = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
     return color_state
 

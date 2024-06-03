@@ -13,6 +13,7 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
+# XXX: 路径可能需要修改
 model_path = '/home/lt/mofang/model/svm_cube_10*10_right4.model'
 img_path = '/home/lt/mofang/view3/test.jpg'
 clf = joblib.load(model_path) # 加载模型

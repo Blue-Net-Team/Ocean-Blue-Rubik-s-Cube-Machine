@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 import time
 
 sys.path.append("..")
-import communication
 
+# XXX: 路径可能需要修改
 model_path = '/home/lt/mofang/model/svm_cube_10*10_up2.model'
 img_path = '/home/lt/mofang/view2/test.jpg'
 clf = joblib.load(model_path) # 加载模型
@@ -97,6 +97,7 @@ def read_usb_capture():
         cv2.imshow('real_img', frame)
         # 按下'q'就退出
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            # FIXME:完成串口通信相关模块
             communication.send_msg('LC RC\r\n')
             cv2.imwrite(img_path,frame)
             cap.release()
