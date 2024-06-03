@@ -32,3 +32,6 @@ $RECYCLE.BIN/
 
 # twophase
 twophase
+
+# python
+*/__pycache__/
