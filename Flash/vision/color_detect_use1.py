@@ -42,11 +42,11 @@ def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(0)
     # 摄像头参数，可自行修改
-    cap.set(10,-35) #0
-    cap.set(11,30) #50
-    cap.set(12,64) #64
-    cap.set(13,-15) #0
-    cap.set(14,64) #64
+    cap.set(10,-35) # 设置亮度
+    cap.set(11,30) # 设置对比度
+    cap.set(12,64) # 设置饱和度
+    cap.set(13,-15) # 设置锐度
+    cap.set(14,64) # 设置色调
     frame_num = 0
     # print(cap.get(10))
     # print(cap.get(11))
