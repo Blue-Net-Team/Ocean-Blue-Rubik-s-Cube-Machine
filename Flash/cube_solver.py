@@ -160,11 +160,3 @@ if __name__ == '__main__':
     # print("spent {:.4f}s.".format((et - st)))
     
     # k
-    """ st = time.perf_counter()
-    _a = a.split()
-    _a = transform(_a)
-    real_solve2, cost2 = _SolutionTransAndOptimize(_a)
-    arm_step2 = arm_planning.planning(real_solve2)
-    #print(arm_step2)
-    et = time.perf_counter()
-    print("spent {:.4f}s.".format((et - st))) """

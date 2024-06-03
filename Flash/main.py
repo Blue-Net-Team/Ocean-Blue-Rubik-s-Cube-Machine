@@ -1,6 +1,5 @@
 import cube_solver
 import time
-import communication
 import arm_planning
 import twophase.cubie as cubie
 from vision import color_detect_use1
@@ -39,39 +38,3 @@ def crack():
     return arm_step
 
 
-
-
-
-
-
-""" et = time.perf_counter()
-time1 = et - st
-
-num = 0
-st = time.perf_counter()
-for i in arm_step:
-    # 按一次回车动一下
-    # if input() == 'c':
-    #     communication.send_msg('LO RO \r\n')
-    #     print(num)
-    # else:
-        num = num + 1
-        i = i + '\r\n'
-        communication.send_msg(i)
-        if str(i[1]) == 'C':
-            time.sleep(0.12)
-        elif str(i[1]) == 'O':
-            time.sleep(0.12)
-        elif str(i[1]) == '2':
-            time.sleep(0.29)
-        else:
-            time.sleep(0.19)
-et = time.perf_counter()
-time2 = et - st
-
-time.sleep(0.1)
-communication.send_msg('LO RO \r\n')
-print(num)
-
-print("识别和规划花费了 {:.4f}s.".format((time1)))
-print("还原魔方花费了 {:.4f}s.".format((time2))) """
