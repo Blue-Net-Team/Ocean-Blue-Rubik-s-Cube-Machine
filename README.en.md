@@ -15,7 +15,8 @@ For Theme 2 of the [China University Intelligent Robot Creative Contest 2024](ht
 
 ## Development Platform
 
-Raspberry Pi 4B
+NVIDIA jetson nano
+ESP32-S3R8N8
 
 ## Development Environment
 

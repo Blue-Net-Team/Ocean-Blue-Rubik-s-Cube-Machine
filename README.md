@@ -15,7 +15,8 @@
 
 ## 开发平台
 
-树莓派4B
+NVIDIA jetson nano
+ESP32-S3R8N8
 
 ## 开发环境
 
