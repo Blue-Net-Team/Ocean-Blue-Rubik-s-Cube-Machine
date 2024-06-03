@@ -52,7 +52,7 @@ def restore():
     """还原"""
     if p5.value() == 1:
         led.value(0)        # 就绪指示灯熄灭
-        for _sign in str_data:
+        for _sign in str_data_lst:
             sign1 = _sign[0]        # L or R
             sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
             if sign1 == "L":
@@ -108,6 +108,7 @@ if __name__ == "__main__":
             led.value(1)        # 就绪指示灯亮起
             break
     str_data = data[1:-1].decode()
+    str_data_lst = str_data.split(' ')
     # endregion
 
     while True:
