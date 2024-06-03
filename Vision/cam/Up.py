@@ -11,6 +11,10 @@ import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import time
+try:
+    import communication
+except:
+    import Vision.communication as communication
 
 sys.path.append("..")
 
@@ -63,6 +67,7 @@ point18_y = 199
  
 def read_usb_capture():
     # 选择摄像头的编号
+    ser = communication.UART()
     cap = cv2.VideoCapture(1)
     cap.set(10,-10) #0
     cap.set(11,10) #50
@@ -97,8 +102,7 @@ def read_usb_capture():
         cv2.imshow('real_img', frame)
         # 按下'q'就退出
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            # FIXME:完成串口通信相关模块
-            communication.send_msg('LC RC\r\n')
+            ser.write('LC RC')
             cv2.imwrite(img_path,frame)
             cap.release()
             cv2.destroyAllWindows()
