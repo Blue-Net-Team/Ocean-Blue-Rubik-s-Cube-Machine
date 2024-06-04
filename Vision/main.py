@@ -37,8 +37,16 @@ def crack():
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)  # ['RO', 'L2', 'RC', 'R2']
     Transmitter = communication.UART()
+    
+    step_str = ''
     for i in arm_step:
-        Transmitter.write(i)
+        if i != arm_step[-1]:
+            step_str += i + ' '
+        else:
+            step_str += i
+
+    Transmitter.write(step_str)
+    
     return arm_step
 
 
