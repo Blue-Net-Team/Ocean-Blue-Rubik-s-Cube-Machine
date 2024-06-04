@@ -36,6 +36,7 @@ def crack():
     _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)  # ['RO', 'L2', 'RC', 'R2']
+    # XXX: 可能需要修改串口号
     Transmitter = communication.UART()
     
     step_str = ''
