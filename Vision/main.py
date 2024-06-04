@@ -1,5 +1,6 @@
 import cube_solver
 import time
+import communication
 import arm_planning
 import twophase.cubie as cubie
 # FIXME: 将下面的模块名更改，更改所有匹配项
@@ -34,7 +35,10 @@ def crack():
     _solve_step = solve_step.split()
     _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
-    arm_step = arm_planning.planning(real_solve)
+    arm_step = arm_planning.planning(real_solve)  # ['RO', 'L2', 'RC', 'R2']
+    Transmitter = communication.UART()
+    for i in arm_step:
+        Transmitter.write(i)
     return arm_step
 
 
