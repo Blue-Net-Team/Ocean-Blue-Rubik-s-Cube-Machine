@@ -3,20 +3,20 @@ import time
 import communication
 import arm_planning
 import twophase.cubie as cubie
-# FIXME: 将下面的模块名更改，更改所有匹配项
-from cam import color_detect_use1
-from cam import color_detect_use2
-from cam import color_detect_use3
-from cam import color_detect_use4
+
+from cam import Right
+from cam import Up
+from cam import Left
+from cam import Down
 
 
 def crack():
     # 获取魔方颜色状态
-    [color_state2,color_state3] = color_detect_use2.detect_color()
-    color_state1 = color_detect_use1.detect_color()
+    [color_state2,color_state3] = Up.detect_color()
+    color_state1 = Right.detect_color()
 
-    color_state4 = color_detect_use3.detect_color()
-    [color_state5,color_state6] = color_detect_use4.detect_color()
+    color_state4 = Left.detect_color()
+    [color_state5,color_state6] = Down.detect_color()
     color_state = color_state2 + color_state1 + color_state3 + color_state5 + color_state4 + color_state6
     color_state = cube_solver.color2view(color_state)
     print("color state is:" + color_state)

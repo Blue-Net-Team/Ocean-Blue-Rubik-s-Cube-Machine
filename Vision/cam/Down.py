@@ -12,9 +12,8 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-# XXX: 路径可能需要修改
-model_path = '/home/lt/mofang/model/svm_cube_10*10_down3.model'
-img_path = '/home/lt/mofang/view4/test.jpg'
+model_path = 'Vision/model/svm_cube_10_10_down3.model'
+img_path = 'Vision/pic/D'
 clf = joblib.load(model_path) # 加载模型
 
 point1_x = 213

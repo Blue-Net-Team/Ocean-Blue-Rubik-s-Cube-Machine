@@ -18,9 +18,8 @@ except:
 
 sys.path.append("..")
 
-# XXX: 路径可能需要修改
-model_path = '/home/lt/mofang/model/svm_cube_10*10_up2.model'
-img_path = '/home/lt/mofang/view2/test.jpg'
+model_path = 'Vision/model/svm_cube_10_10_up2.model'
+img_path = 'Vision/pic/U'
 clf = joblib.load(model_path) # 加载模型
 
 point1_x = 187
