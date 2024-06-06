@@ -16,12 +16,14 @@ class SteppingMotor:
         self.en.value(1)
         pass
 
-    def rotate(self, circle, direction=1, _stop=0):
+    def rotate(self, sign, _stop=0):
         """步进电机转动
-        * circle: 转动圈数
+        * sign: 旋转信号
         * direction: 转动方向
         * _stop: 步进间隔
         """
+        d = {"1": (0.25, 1), "2": (0.5, 1), "3":(0.25, 0)}
+        circle, direction = d[sign]
         self.dir.value(direction)
         for i in range(3200 * circle):
             self.stp.value(1)
