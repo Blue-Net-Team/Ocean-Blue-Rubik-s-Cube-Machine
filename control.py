@@ -87,11 +87,13 @@ if __name__ == "__main__":
     right_cylinder = ClampCylinder(16)
 
     led = Pin(9, Pin.OUT)
+    # endregion 
 
+    # region 设置中断
     p6 = Pin(6, Pin.OUT, value=0) # 初始化GPIO6
     p5 = Pin(5, Pin.IN, Pin.PULL_DOWN) # 初始化GPIO5,设置拉低电阻
     p5.irq(restore, Pin.IRQ_RISING) # GPIO38设置上升沿触发中断
-    # endregion 
+    # endregion
 
     # region 接收信号
     PACKET_HEAD = b'@'
