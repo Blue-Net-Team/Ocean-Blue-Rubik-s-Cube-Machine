@@ -4,7 +4,7 @@ import serial
 
 
 class UART(serial.Serial):
-    def __init__(self, port='/dev/ttyAMA0', baudrate=9600, timeout:float|None=None):
+    def __init__(self, port='/dev/ttyTHS1', baudrate=9600, timeout:float|None=None):
         """
         串口初始化
         * port: 串口号
