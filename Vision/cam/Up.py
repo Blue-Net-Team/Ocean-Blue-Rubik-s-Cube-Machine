@@ -65,7 +65,6 @@ point18_x = 440
 point18_y = 199
  
 def read_usb_capture():
-    # XXX:可能要改变串口号
     ser = communication.UART()
     # 选择摄像头的编号
     cap = cv2.VideoCapture(1)
