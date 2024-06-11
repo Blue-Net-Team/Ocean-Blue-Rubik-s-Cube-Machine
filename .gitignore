@@ -29,6 +29,7 @@ $RECYCLE.BIN/
 # IDE
 .idea
 .vscode
+*.json
 
 # twophase
 twophase
