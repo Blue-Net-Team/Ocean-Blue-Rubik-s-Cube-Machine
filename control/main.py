@@ -48,7 +48,7 @@ class ClampCylinder:
         pass
 
 
-uart = UART(baudrate=9600, tx=8, rx=7)
+uart = UART(1, baudrate=9600, tx=8, rx=7)
 
 def restore():
     """还原"""
