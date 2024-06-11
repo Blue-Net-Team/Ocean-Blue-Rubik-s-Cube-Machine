@@ -36,7 +36,6 @@ def crack():
     _solve_step = _solve_step[:-1]
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)  # ['RO', 'L2', 'RC', 'R2']
-    Transmitter = communication.UART()
     
     step_str = ''
     for i in arm_step:
@@ -49,4 +48,11 @@ def crack():
     
     return arm_step
 
+Transmitter = communication.UART()
 
+if __name__ == '__main__':
+    # TODO:最好拉高一个引脚电平来点亮一个LED从而指示jetson nano已经就绪
+    while True:
+        sign = Transmitter.read()
+        if sign == 'OK':
+            crack()
