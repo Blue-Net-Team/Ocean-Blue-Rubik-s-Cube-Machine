@@ -87,11 +87,22 @@ class UART(serial.Serial):
         """
         return super().write(data.encode('ascii'))
     
-    @read_pack
-    def read(self, size:int=1) -> str:
-        data = super().read(size)
+    def read(self, head=b'@', tail=b'#') -> str|None:
+        PACKET_HEAD = head
+        PACKET_TAIL = tail
+
+        data = b''  # 用于存储接收到的数据
+
+        while True:
+            byte = super().read()
+            if byte == PACKET_HEAD:
+                data = b''
+                continue
+            if byte == PACKET_TAIL:
+                break
+            data += byte
         res = data.decode('ascii')
-        return res
+        return res if res else None
     
     def __del__(self) -> None:
         return self.close()
