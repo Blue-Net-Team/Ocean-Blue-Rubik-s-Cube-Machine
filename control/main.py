@@ -1,3 +1,4 @@
+import time
 from machine import UART
 from machine import Pin
 
@@ -48,35 +49,53 @@ class ClampCylinder:
         pass
 
 
-uart = UART(1, baudrate=9600, tx=8, rx=7)
+uart = UART(1, baudrate=9600, tx=8, rx=7)       # type: ignore
 
 def restore():
-    """还原"""
-    if p5.value() == 1:
-        led.value(0)        # 就绪指示灯熄灭
-        for _sign in str_data_lst:
-            sign1 = _sign[0]        # L or R
-            sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
-            if sign1 == "L":
-                motor = left_motor
-                cylinder = left_cylinder
-                
-            elif sign1 == "R":
-                motor = right_motor
-                cylinder = right_cylinder
+    """还原
+    ----
+    收到信号触发"""
+    led.value(0)        # 就绪指示灯熄灭
+    for _sign in str_data_lst:
+        sign1 = _sign[0]        # L or R
+        sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
+        if sign1 == "L":
+            motor = left_motor
+            cylinder = left_cylinder
+            
+        elif sign1 == "R":
+            motor = right_motor
+            cylinder = right_cylinder
 
-            else:
-                raise ValueError("Invalid sign")
+        else:
+            raise ValueError("Invalid sign")
 
-            if sign2 == "O":
-                cylinder.open()
-            elif sign2 == "C":
-                cylinder.close()
-            elif sign2 in ["1", "2", "3"]:
-                motor.rotate(sign2)
-            else:
-                raise ValueError("Invalid sign")
+        if sign2 == "O":
+            cylinder.open()
+            time.sleep(0.1)
+        elif sign2 == "C":
+            # FIXME:RC会出现TypeError，提示传参应该接收0但是收到1，原因未知，但是不影响程序运行
+            cylinder.close()
+            time.sleep(0.1)
+        elif sign2 in ["1", "2", "3"]:
+            motor.rotate(sign2)
+            time.sleep(0.2)
+        else:
+            raise ValueError("Invalid sign")
 
+def send():
+    """发送数据
+    ----
+    按下按钮触发"""
+    data = bytearray(b'@OK#')
+    uart.write(data)
+
+def _irq(x):
+    """中断处理函数"""
+    global flag
+    if x.value() == 1:
+        flag = False
+        send()
 
 if __name__ == "__main__":
     # region 创建对象
@@ -92,8 +111,12 @@ if __name__ == "__main__":
     # region 设置中断
     p6 = Pin(6, Pin.OUT, value=0) # 初始化GPIO6
     p5 = Pin(5, Pin.IN, Pin.PULL_DOWN) # 初始化GPIO5,设置拉低电阻
-    p5.irq(restore, Pin.IRQ_RISING) # GPIO38设置上升沿触发中断
+    p5.irq(_irq, Pin.IRQ_RISING) # GPIO38设置上升沿触发中断
     # endregion
+
+    flag = True
+    while flag:
+        p6.on()
 
     # region 接收信号
     PACKET_HEAD = b'@'
@@ -115,5 +138,4 @@ if __name__ == "__main__":
     str_data_lst = str_data.split(' ')
     # endregion
 
-    while True:
-        p6.on()
+    restore()
