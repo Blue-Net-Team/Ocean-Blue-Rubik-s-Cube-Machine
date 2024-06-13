@@ -12,47 +12,47 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-model_path = 'Vision/model/svm_cube_10_10_down3.model'
-img_path = 'Vision/pic/D'
+model_path = 'model/svm_cube_10_10_down3.model'
+img_path = 'pic/D/D.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 213
+point1_x = 113
 point1_y = 290
-point2_x = 221
-point2_y = 223
-point3_x = 228
-point3_y = 159
+point2_x = 113
+point2_y = 200
+point3_x = 113
+point3_y = 100
 
-point4_x = 251
+point4_x = 160
 point4_y = 294
-point5_x = 259
+point5_x = 160
 point5_y = 218
-point6_x = 265
-point6_y = 160
+point6_x = 160
+point6_y = 70
 
 point7_x = 300
-point7_y = 309
+point7_y = 320
 point8_x = 309
 point8_y = 226
 point9_x = 316
-point9_y = 141
+point9_y = 70
 
-point10_x = 466
-point10_y = 181
-point11_x = 459
-point11_y = 254
-point12_x = 450
+point10_x = 550
+point10_y = 70
+point11_x = 550
+point11_y = 180
+point12_x = 550
 point12_y = 321
 
-point13_x = 431
-point13_y = 173
-point14_x = 422
-point14_y = 246
-point15_x = 412
-point15_y = 320
+point13_x = 481
+point13_y = 90
+point14_x = 482
+point14_y = 180
+point15_x = 482
+point15_y = 321
 
 point16_x = 382
-point16_y = 148
+point16_y = 90
 point17_x = 372
 point17_y = 233
 point18_x = 365
@@ -61,11 +61,19 @@ point18_y = 325
 def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(3)
-    cap.set(10,10) #0
-    cap.set(11,30) #50
-    cap.set(12,64) #64
-    cap.set(13,-10) #0
-    cap.set(14,64) #64
+    
+    # 设置曝光时间,负值是短
+    cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+
+    # 设置白平衡
+    cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+    
+    cap.set(10,-40) #0 亮度
+    cap.set(11,50) #50 对比度
+    cap.set(12,64) #64 饱和度
+    cap.set(13,0) #0 色调
+    cap.set(14,70) #64 锐度 图像增益
+    
     # 添加这句是可以用鼠标拖动弹出的窗体
     cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     frame_num = 0

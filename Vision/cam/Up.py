@@ -18,61 +18,69 @@ except:
 
 sys.path.append("..")
 
-model_path = 'Vision/model/svm_cube_10_10_up2.model'
-img_path = 'Vision/pic/U'
+model_path = 'model/svm_cube_10_10_up2.model'
+img_path = 'pic/U/U.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 187
-point1_y = 321
-point2_x = 190
-point2_y = 251
-point3_x = 195
-point3_y = 182
+point1_x = 150
+point1_y = 290
+point2_x = 150
+point2_y = 200
+point3_x = 150
+point3_y = 80
 
-point4_x = 222
-point4_y = 332
-point5_x = 226
-point5_y = 254
-point6_x = 232
-point6_y = 177
+point4_x = 200
+point4_y = 290
+point5_x = 200
+point5_y = 200
+point6_x = 200
+point6_y = 80
 
 point7_x = 270
-point7_y = 349
+point7_y = 290
 point8_x = 276
-point8_y = 261
+point8_y = 200
 point9_x = 279
-point9_y = 171
+point9_y = 80
 
-point10_x = 337
-point10_y = 356
-point11_x = 345
-point11_y = 272
-point12_x = 350
-point12_y = 174
+point10_x = 367
+point10_y = 290
+point11_x = 375
+point11_y = 200
+point12_x = 380
+point12_y = 70
 
-point13_x = 392
-point13_y = 346
-point14_x = 400
-point14_y = 266
-point15_x = 400
-point15_y = 190
+point13_x = 440
+point13_y = 290
+point14_x = 440
+point14_y = 200
+point15_x = 440
+point15_y = 80
 
-point16_x = 432
-point16_y = 340
-point17_x = 437
-point17_y = 274
-point18_x = 440
-point18_y = 199
+point16_x = 500
+point16_y = 290
+point17_x = 500
+point17_y = 200
+point18_x = 500
+point18_y = 90
  
 def read_usb_capture():
-    ser = communication.UART()
+    # ser = communication.UART()
     # 选择摄像头的编号
     cap = cv2.VideoCapture(1)
-    cap.set(10,-10) #0
-    cap.set(11,10) #50
-    cap.set(12,64) #64
-    cap.set(13,0) #0
-    cap.set(14,64) #64
+    
+    # 设置曝光时间,负值是短
+    cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+
+    # 设置白平衡
+    cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+    
+    cap.set(10,-40) #0 亮度
+    cap.set(11,50) #50 对比度
+    cap.set(12,64) #64 饱和度
+    cap.set(13,0) #0 色调
+    cap.set(14,70) #64 锐度 图像增益
+    
     # 添加这句是可以用鼠标拖动弹出的窗体
     cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     while(cap.isOpened()):
@@ -99,9 +107,9 @@ def read_usb_capture():
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
         cv2.imshow('real_img', frame)
-        # 按下'q'就退出
+        # 按下'q'之前阻塞进程
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            ser.write('LC RC')
+            # ser.write('LC RC')
             cv2.imwrite(img_path,frame)
             cap.release()
             cv2.destroyAllWindows()

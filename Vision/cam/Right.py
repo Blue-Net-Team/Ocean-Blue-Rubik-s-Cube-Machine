@@ -13,39 +13,46 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-model_path = 'Vision/model/svm_cube_10_10_right.model'
-img_path = 'Vision/pic/R'
+model_path = 'model/svm_cube_10_10_right.model'
+img_path = 'pic/R/R.png'
 clf = joblib.load(model_path) # 加载模型
 
 # ROI参数，可自行修改
-point1_x = 340
-point1_y = 102
-point2_x = 413
-point2_y = 178
-point3_x = 470
+point1_x = 320
+point1_y = 60
+point2_x = 420
+point2_y = 170
+point3_x = 500
 point3_y = 251
-point4_x = 264
+point4_x = 230
 point4_y = 175
 point5_x = 341
 point5_y = 250
-point6_x = 402
-point6_y = 322
-point7_x = 190
+point6_x = 415
+point6_y = 315
+point7_x = 135
 point7_y = 243
-point8_x = 259
-point8_y = 321
-point9_x = 335
-point9_y = 399
+point8_x = 250
+point8_y = 338
+point9_x = 320
+point9_y = 435
 
 def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(0)
+    
+    # 设置曝光时间,负值是短
+    cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+
+    # 设置白平衡
+    cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+    
     # 摄像头参数，可自行修改
-    cap.set(10,-35) # 设置亮度
-    cap.set(11,30) # 设置对比度
-    cap.set(12,64) # 设置饱和度
-    cap.set(13,-15) # 设置锐度
-    cap.set(14,64) # 设置色调
+    cap.set(10,-40) #0 亮度
+    cap.set(11,50) #50 对比度
+    cap.set(12,64) #64 饱和度
+    cap.set(13,0) #0 色调
+    cap.set(14,70) #64 锐度 图像增益
     frame_num = 0
     # print(cap.get(10))
     # print(cap.get(11))
