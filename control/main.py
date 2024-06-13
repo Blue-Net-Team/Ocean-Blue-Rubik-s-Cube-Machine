@@ -111,7 +111,7 @@ if __name__ == "__main__":
     # region 设置中断
     p6 = Pin(6, Pin.OUT, value=0) # 初始化GPIO6
     p5 = Pin(5, Pin.IN, Pin.PULL_DOWN) # 初始化GPIO5,设置拉低电阻
-    p5.irq(_irq, Pin.IRQ_RISING) # GPIO38设置上升沿触发中断
+    p5.irq(_irq, Pin.IRQ_RISING) # GPIO5设置上升沿触发中断
     # endregion
 
     flag = True
