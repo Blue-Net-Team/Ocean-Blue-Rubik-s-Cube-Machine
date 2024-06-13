@@ -38,7 +38,7 @@ point6_y = 80
 
 point7_x = 270
 point7_y = 290
-point8_x = 276
+point8_x = 260
 point8_y = 200
 point9_x = 279
 point9_y = 80

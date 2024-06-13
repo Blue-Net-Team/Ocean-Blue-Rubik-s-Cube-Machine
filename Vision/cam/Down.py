@@ -37,11 +37,11 @@ point8_y = 226
 point9_x = 316
 point9_y = 70
 
-point10_x = 550
+point10_x = 590
 point10_y = 70
-point11_x = 550
+point11_x = 590
 point11_y = 180
-point12_x = 550
+point12_x = 590
 point12_y = 321
 
 point13_x = 481
@@ -51,11 +51,11 @@ point14_y = 180
 point15_x = 482
 point15_y = 321
 
-point16_x = 382
+point16_x = 400
 point16_y = 90
-point17_x = 372
+point17_x = 400
 point17_y = 233
-point18_x = 365
+point18_x = 400
 point18_y = 325
  
 def read_usb_capture():

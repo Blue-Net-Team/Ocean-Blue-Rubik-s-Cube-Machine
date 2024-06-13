@@ -24,8 +24,8 @@ point2_x = 420
 point2_y = 170
 point3_x = 500
 point3_y = 251
-point4_x = 230
-point4_y = 175
+point4_x = 200
+point4_y = 160
 point5_x = 341
 point5_y = 250
 point6_x = 415
@@ -34,7 +34,7 @@ point7_x = 135
 point7_y = 243
 point8_x = 250
 point8_y = 338
-point9_x = 320
+point9_x = 310
 point9_y = 435
 
 def read_usb_capture():
