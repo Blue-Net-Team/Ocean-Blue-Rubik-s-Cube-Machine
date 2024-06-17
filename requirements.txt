@@ -1,5 +1,6 @@
-# Windows
 # pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# Windows
 opencv-python
 numpy
 kociemba
@@ -11,7 +12,7 @@ pyserial
 # Linux
 # opencv-python
 # numpy
-# kociemba  -> using "sudo apt-get install libffi-dev" to install kociemba
+# kociemba  -> using "sudo apt-get install libffi-dev" before install kociemba
 # RubikTwoPhase 
 # sscikit-learn
 # joblib

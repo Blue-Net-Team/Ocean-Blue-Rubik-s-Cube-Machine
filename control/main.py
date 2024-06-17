@@ -17,7 +17,7 @@ class SteppingMotor:
         self.en.value(1)
         pass
 
-    def rotate(self, sign, _stop=0):
+    def rotate(self, sign, _stop=25):
         """步进电机转动
         * sign: 旋转信号
         * direction: 转动方向
@@ -72,16 +72,17 @@ def restore():
 
         if sign2 == "O":
             cylinder.open()
-            time.sleep(0.1)
         elif sign2 == "C":
-            # FIXME:RC会出现TypeError，提示传参应该接收0但是收到1，原因未知，但是不影响程序运行
             cylinder.close()
-            time.sleep(0.1)
-        elif sign2 in ["1", "2", "3"]:
-            motor.rotate(sign2)
-            time.sleep(0.2)
+        elif sign2 in ["1", "3"]:
+            motor.rotate(sign2, 25)
+        elif sign2 == "2":
+            motor.rotate(sign2, 10)
+            time.sleep(0.05)
         else:
             raise ValueError("Invalid sign")
+        
+        time.sleep(0.17)
 
 def send():
     """发送数据
