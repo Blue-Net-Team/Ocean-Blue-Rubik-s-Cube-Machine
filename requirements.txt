@@ -6,6 +6,7 @@ kociemba
 RubikTwoPhase
 scikit-learn
 joblib
+pyserial
 
 # Linux
 # opencv-python
