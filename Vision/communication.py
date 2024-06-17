@@ -4,6 +4,7 @@ import serial
 
 
 class UART(serial.Serial):
+    # FIXME: 应该通过UART类来调用send_pack_int方法，而不是通过UART的实例来调用。
     def __init__(self, port='/dev/ttyTHS1', baudrate=9600, timeout:float|None=None):
         """
         串口初始化
