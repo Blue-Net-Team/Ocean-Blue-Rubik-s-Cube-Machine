@@ -38,3 +38,7 @@ twophase
 # python
 */__pycache__/
 *test*
+
+# pic
+*.jpg
+*.png
