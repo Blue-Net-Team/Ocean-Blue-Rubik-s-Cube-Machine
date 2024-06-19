@@ -1,6 +1,8 @@
 import time
 from machine import UART
 from machine import Pin
+from machine import I2C
+import ssd1306
 
 
 class SteppingMotor:
@@ -78,6 +80,8 @@ def restore():
     ----
     收到信号触发"""
     for _sign in str_data_lst:
+        oled.fill(0)
+        oled.text(f'{_sign}', 0, 10)
         sign1 = _sign[0]        # L or R
         sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
         if sign1 == "L":
@@ -123,7 +127,15 @@ if __name__ == "__main__":
     left_cylinder = ClampCylinder(17)
     right_cylinder = ClampCylinder(16)
 
+    gas_switch = Pin(15, Pin.OUT)
+
     led = Pin(9, Pin.OUT)
+
+    i2c = I2C(0, scl=Pin(5), sda=Pin(4))
+
+    oled_width = 128
+    oled_height = 64
+    oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
     # endregion 
 
     while True:
@@ -147,6 +159,22 @@ if __name__ == "__main__":
         str_data_lst = str_data.split(' ')
         # endregion
 
+        oled.fill(0)
+
+        gas_switch.value(1)
         led.on()
+        oled.text(f'{len(str_data_lst)} steps', 0, 0)
         restore()
         led.off()
+
+        oled.fill(0)
+        oled.text('Finish', 0, 0)
+        oled.show()
+
+        left_cylinder.open()
+        right_cylinder.open()
+
+        gas_switch.value(0)
+
+        left_cylinder.close()
+        right_cylinder.close()
