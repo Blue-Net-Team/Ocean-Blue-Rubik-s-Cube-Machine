@@ -17,21 +17,43 @@ class SteppingMotor:
         self.en.value(1)
         pass
 
-    def rotate(self, sign, _stop=25):
+    def rotate(self, sign:str, _stop=25):
         """步进电机转动
         * sign: 旋转信号
         * direction: 转动方向
         * _stop: 步进间隔
         """
-        d = {"1": (0.25, 1), "2": (0.5, 1), "3":(0.25, 0)}
+        d = {"1": (0.25, 0), "2": (0.5, 0), "3":(0.25, 1)}
         circle, direction = d[sign]
         self.dir.value(direction)
-        for i in range(3200 * circle):
+
+        total_steps = int(3200 * circle)
+        accel_steps = total_steps // 4  # 加速阶段步数
+        decel_steps = total_steps // 4  # 减速阶段步数
+        uniform_steps = total_steps - accel_steps - decel_steps  # 匀速阶段步数
+
+        # 加速阶段
+        for i in range(accel_steps):
+            _stop = _stop - i // 5  # 假设每100步加速一次
             self.stp.value(1)
-            for _ in range(_stop):pass
+            for _ in range(_stop): pass
             self.stp.value(0)
-            for _ in range(_stop):pass
-        pass
+            for _ in range(_stop): pass
+
+        # 匀速阶段
+        for i in range(uniform_steps):
+            self.stp.value(1)
+            for _ in range(_stop): pass
+            self.stp.value(0)
+            for _ in range(_stop): pass
+
+        # 减速阶段
+        for i in range(decel_steps):
+            _stop = _stop + i // 50  # 假设每100步减速一次
+            self.stp.value(1)
+            for _ in range(_stop): pass
+            self.stp.value(0)
+            for _ in range(_stop): pass
 
 
 class ClampCylinder:
@@ -55,7 +77,6 @@ def restore():
     """还原
     ----
     收到信号触发"""
-    led.value(0)        # 就绪指示灯熄灭
     for _sign in str_data_lst:
         sign1 = _sign[0]        # L or R
         sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
@@ -70,19 +91,21 @@ def restore():
         else:
             raise ValueError("Invalid sign")
 
-        if sign2 == "O":
-            cylinder.open()
-        elif sign2 == "C":
-            cylinder.close()
-        elif sign2 in ["1", "3"]:
-            motor.rotate(sign2, 25)
-        elif sign2 == "2":
-            motor.rotate(sign2, 10)
-            time.sleep(0.05)
+        if sign2 in ["O", "C"]:
+            if sign2 == 'O':
+                cylinder.open()
+            if sign2 == "C":
+                cylinder.close()
+            time.sleep(0.1)        # 0.15可用 5个压    0.1 6个压测试
+        elif sign2 in ['1','2','3']:
+            if sign2 in ["1", "3"]:
+                motor.rotate(sign2, 0)     # 5
+            elif sign2 == "2":
+                motor.rotate(sign2, 0)      # 5
+            time.sleep(0.3)
         else:
             raise ValueError("Invalid sign")
         
-        time.sleep(0.17)
 
 def send():
     """发送数据
@@ -91,12 +114,6 @@ def send():
     data = bytearray(b'@OK#')
     uart.write(data)
 
-def _irq(x):
-    """中断处理函数"""
-    global flag
-    if x.value() == 1:
-        flag = False
-        send()
 
 if __name__ == "__main__":
     # region 创建对象
@@ -109,34 +126,27 @@ if __name__ == "__main__":
     led = Pin(9, Pin.OUT)
     # endregion 
 
-    # region 设置中断
-    p6 = Pin(6, Pin.OUT, value=0) # 初始化GPIO6
-    p5 = Pin(5, Pin.IN, Pin.PULL_DOWN) # 初始化GPIO5,设置拉低电阻
-    p5.irq(_irq, Pin.IRQ_RISING) # GPIO5设置上升沿触发中断
-    # endregion
-
-    flag = True
-    while flag:
-        p6.on()
-
-    # region 接收信号
-    PACKET_HEAD = b'@'
-    PACKET_TAIL = b'#'
-
-    data = b''  # 用于存储接收到的数据
-
     while True:
-        byte = uart.read(2)
-        if byte == b'' or byte is None:
-            continue
-        if byte == PACKET_HEAD:
-            data = b''
-        data += byte
-        if byte == PACKET_TAIL:
-            led.value(1)        # 就绪指示灯亮起
-            break
-    str_data = data[1:-1].decode()
-    str_data_lst = str_data.split(' ')
-    # endregion
+        # region 接收信号
+        PACKET_HEAD = b'@'
+        PACKET_TAIL = b'#'
 
-    restore()
+        data = b''  # 用于存储接收到的数据
+
+        while True:
+            byte = uart.read(1)
+            if byte == b'' or byte is None:
+                continue
+            if byte == PACKET_HEAD:
+                data = b''
+            data += byte
+            if byte == PACKET_TAIL:
+                led.value(1)        # 就绪指示灯亮起
+                break
+        str_data = data[1:-1].decode()
+        str_data_lst = str_data.split(' ')
+        # endregion
+
+        led.on()
+        restore()
+        led.off()
