@@ -9,60 +9,56 @@ if ros_path in sys.path:
 import cv2
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
-try:
-    import communication
-except:
-    import Vision.communication as communication
+# try:
+sys.path.append('/home/lanwang/rubiks-cube-machine')  # 添加库的路径到系统路径
+import Vision.communication as communication
+# except:
+#     import Vision.communication as communication
 
 sys.path.append("..")
 
-model_path = 'model/svm_cube_10_10_up2.model'
-img_path = 'pic/U/U.png'
+model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_up2.model'
+img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/U/Ut.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 150
+point1_x = 182
 point1_y = 290
-point2_x = 150
+point2_x = 176
 point2_y = 200
-point3_x = 150
-point3_y = 80
-
-point4_x = 200
-point4_y = 290
-point5_x = 200
+point3_x = 191
+point3_y = 96
+point4_x = 238
+point4_y = 299
+point5_x = 244
 point5_y = 200
-point6_x = 200
+point6_x = 256
 point6_y = 80
-
-point7_x = 270
+point7_x = 321
 point7_y = 290
-point8_x = 260
+point8_x = 336
 point8_y = 200
-point9_x = 279
+point9_x = 330
 point9_y = 80
-
-point10_x = 367
+point10_x = 425
 point10_y = 290
-point11_x = 375
+point11_x = 419
 point11_y = 200
-point12_x = 380
+point12_x = 434
 point12_y = 70
-
-point13_x = 440
-point13_y = 290
-point14_x = 440
+point13_x = 485
+point13_y = 307
+point14_x = 485
 point14_y = 200
-point15_x = 440
+point15_x = 488
 point15_y = 80
-
-point16_x = 500
-point16_y = 290
-point17_x = 500
+point16_x = 531
+point16_y = 303
+point17_x = 531
 point17_y = 200
-point18_x = 500
-point18_y = 90
+point18_x = 540
+point18_y = 114
  
 def read_usb_capture():
     # ser = communication.UART()
@@ -82,7 +78,7 @@ def read_usb_capture():
     cap.set(14,70) #64 锐度 图像增益
     
     # 添加这句是可以用鼠标拖动弹出的窗体
-    cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
@@ -106,13 +102,13 @@ def read_usb_capture():
         cv2.rectangle(frame,(point16_x-7,point16_y-7),(point16_x + 7,point16_y + 7),(0,255,0))
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
-        cv2.imshow('real_img', frame)
+        # cv2.imshow('real_img', frame)
         # 按下'q'之前阻塞进程
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
             # ser.write('LC RC')
-            cv2.imwrite(img_path,frame)
-            cap.release()
-            cv2.destroyAllWindows()
+        cv2.imwrite(img_path,frame)
+        cap.release()
+        cv2.destroyAllWindows()
     return frame
 
 def img2vector(img):

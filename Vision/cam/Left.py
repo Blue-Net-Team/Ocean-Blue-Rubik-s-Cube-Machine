@@ -10,31 +10,31 @@ import cv2
 
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
 
-model_path = 'model/svm_cube_10_10_left4.model'
-img_path = 'pic/L/L.png'
+model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_right.model'
+img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/L/L.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 100
+point1_x = 74
 point1_y = 220
-point2_x = 210
+point2_x = 167
 point2_y = 140
-point3_x = 360
-point3_y = 40
-point4_x = 270
-point4_y = 340
+point3_x = 292
+point3_y = 18
+point4_x = 220
+point4_y = 299
 point5_x = 323
 point5_y = 228
-point6_x = 470
-point6_y = 173
+point6_x = 426
+point6_y = 123
 point7_x = 340
 point7_y = 445
-point8_x = 435
-point8_y = 345
+point8_x = 414
+point8_y = 310
 point9_x = 540
-point9_y = 275
+point9_y = 237
 
 def read_usb_capture():
     # 选择摄像头的编号
@@ -53,7 +53,7 @@ def read_usb_capture():
     cap.set(14,70) #64 锐度 图像增益
     
     # 添加这句是可以用鼠标拖动弹出的窗体
-    cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     frame_num = 0
     while(cap.isOpened()):
         # 读取摄像头的画面
@@ -69,9 +69,9 @@ def read_usb_capture():
         cv2.rectangle(frame,(point7_x - 7,point7_y - 7),(point7_x + 7,point7_y + 7),(0,105,0))
         cv2.rectangle(frame,(point8_x - 7,point8_y - 7),(point8_x + 7,point8_y + 7),(0,105,0))
         cv2.rectangle(frame,(point9_x - 7,point9_y - 7),(point9_x + 7,point9_y + 7),(0,105,0))
-        cv2.imshow('real_img', frame)
+        # cv2.imshow('real_img', frame)
         # 按下'q'就退出
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
         if frame_num > 2:
             cv2.imwrite(img_path,frame)
             cap.release()
