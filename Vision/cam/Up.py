@@ -23,42 +23,154 @@ model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_up2.
 img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/U/Ut.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 182
-point1_y = 290
-point2_x = 176
-point2_y = 200
-point3_x = 191
-point3_y = 96
-point4_x = 238
-point4_y = 299
-point5_x = 244
-point5_y = 200
-point6_x = 256
-point6_y = 80
-point7_x = 321
-point7_y = 290
-point8_x = 336
-point8_y = 200
-point9_x = 330
-point9_y = 80
-point10_x = 425
-point10_y = 290
-point11_x = 419
-point11_y = 200
-point12_x = 434
-point12_y = 70
-point13_x = 485
-point13_y = 307
-point14_x = 485
-point14_y = 200
-point15_x = 488
-point15_y = 80
-point16_x = 531
-point16_y = 303
-point17_x = 531
-point17_y = 200
-point18_x = 540
-point18_y = 114
+def process_image(image):
+    global point1_x,point1_y,point2_x,point2_y,point3_x,point3_y,point4_x,point4_y,point5_x,point5_y,point6_x,point6_y,point7_x,point7_y,point8_x,point8_y,point9_x,point9_y
+    # Find the center coordinates of the frame
+    frame_height, frame_width, _ = image.shape
+    center_x = frame_width // 2
+    center_y = frame_height // 2
+
+    # Set the dimensions of the box
+    box_width = 180
+    box_height = 180
+
+    # Calculate the coordinates of the top-left and bottom-right corners of the box
+    top_left_x = center_x - (box_width // 2)
+    top_left_y = center_y - (box_height // 2)
+    bottom_right_x = center_x + (box_width // 2)
+    bottom_right_y = center_y + (box_height // 2)
+
+    # Draw the box on the image
+    # cv2.rectangle(image, (top_left_x - 120, top_left_y-20), (bottom_right_x -120, bottom_right_y-20), (255, 0, 0), 2)
+    # cv2.rectangle(image, (top_left_x + 150, top_left_y-20), (bottom_right_x + 150, bottom_right_y-20), (0, 255, 0), 2)
+    
+    # Crop the image to the region of interest (ROI)
+    # Define the coordinates of the two boxes
+    box1_top_left_x = top_left_x - 150
+    box1_top_left_y = top_left_y
+    box1_bottom_right_x = bottom_right_x - 150
+    box1_bottom_right_y = bottom_right_y
+
+    box2_top_left_x = top_left_x + 150
+    box2_top_left_y = top_left_y
+    box2_bottom_right_x = bottom_right_x + 150
+    box2_bottom_right_y = bottom_right_y
+
+    # Crop the image to the region of interest (ROI) for box 1
+    roi1 = image[box1_top_left_y:box1_bottom_right_y, box1_top_left_x:box1_bottom_right_x]
+
+    # Process the ROI for box 1
+    gray_roi1 = cv2.cvtColor(roi1, cv2.COLOR_BGR2GRAY)
+    blurred_roi1 = cv2.GaussianBlur(gray_roi1, (5, 5), 0)
+    edges_roi1 = cv2.Canny(blurred_roi1, 50, 150)
+
+    # Find contours in the ROI for box 1
+    contours1, _ = cv2.findContours(edges_roi1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    diamond_contours1 = []
+
+    for contour in contours1:
+        # Approximate the contour
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.04 * peri, True)
+
+        # Check if it is a diamond shape (4 vertices)
+        if len(approx) == 4:
+            area = cv2.contourArea(contour)
+            (x, y, w, h) = cv2.boundingRect(approx)
+            ratio = w / float(h)
+            if ratio >= 0.5 and ratio <= 1.2 and area > 1000 and area < 30000:
+                diamond_contours1.append(contour)
+
+    # Assume the center diamond is the one with the largest area
+    max_area1 = 0
+    center_diamond1 = None
+
+    for contour in diamond_contours1:
+        area = cv2.contourArea(contour)
+        if area > max_area1:
+            max_area1 = area
+            center_diamond1 = contour
+
+    if center_diamond1 is not None:
+        # Convert the coordinates of the center box to the original image coordinates
+        center_diamond1[:, 0, 0] += box1_top_left_x
+        center_diamond1[:, 0, 1] += box1_top_left_y
+
+        # cv2.drawContours(image, [center_diamond1], -1, (0, 255, 0), 2)
+        M1 = cv2.moments(center_diamond1)
+        cx1 = int(M1['m10']/M1['m00'])
+        cy1 = int(M1['m01']/M1['m00'])
+        # print(f"Center diamond 1 coordinates: ({cx1}, {cy1})")
+        # p2,p8 = (cx1 - 60, cy1), (cx1 + 90, cy1)
+        # p4,p6 = (cx1, cy1 - 100), (cx1, cy1 + 100)
+        # p3,p7 = (cx1 - 60, cy1 - 100), (cx1 + 90, cy1 + 100)
+        # p1,p9 = (cx1 + 90, cy1 - 100), (cx1 - 60, cy1 + 100)
+        point1_x,point1_y = (cx1 + 90, cy1 - 100)
+        point2_x,point2_y = (cx1 - 60, cy1)
+        point3_x,point3_y = (cx1 - 60, cy1 - 100)
+        point4_x,point4_y = (cx1, cy1 - 100)
+        point5_x,point5_y = (cx1, cy1)
+        point6_x,point6_y = (cx1, cy1 + 100)
+        point7_x,point7_y = (cx1 + 90, cy1 + 100)
+        point8_x,point8_y = (cx1 + 90, cy1)
+        point9_x,point9_y = (cx1 - 60, cy1 + 100)
+
+    global point10_x,point10_y,point11_x,point11_y,point12_x,point12_y,point13_x,point13_y,point14_x,point14_y,point15_x,point15_y,point16_x,point16_y,point17_x,point17_y,point18_x,point18_y
+    # Crop the image to the region of interest (ROI) for box 2
+    roi2 = image[box2_top_left_y:box2_bottom_right_y, box2_top_left_x:box2_bottom_right_x]
+
+    # Process the ROI for box 2
+    gray_roi2 = cv2.cvtColor(roi2, cv2.COLOR_BGR2GRAY)
+    blurred_roi2 = cv2.GaussianBlur(gray_roi2, (5, 5), 0)
+    edges_roi2 = cv2.Canny(blurred_roi2, 50, 150)
+
+    # Find contours in the ROI for box 2
+    contours2, _ = cv2.findContours(edges_roi2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    diamond_contours2 = []
+
+    for contour in contours2:
+        # Approximate the contour
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.1 * peri, True)
+
+        # Check if it is a diamond shape (4 vertices)
+        if len(approx) == 4:
+            area = cv2.contourArea(contour)
+            (x, y, w, h) = cv2.boundingRect(approx)
+            ratio = w / float(h)
+            if ratio >= 0.5 and ratio <= 1.2 and area > 1000 and area < 30000:
+                diamond_contours2.append(contour)
+
+    # Assume the center diamond is the one with the largest area
+    max_area2 = 0
+    center_diamond2 = None
+
+    for contour in diamond_contours2:
+        area = cv2.contourArea(contour)
+        if area > max_area2:
+            max_area2 = area
+            center_diamond2 = contour
+
+    if center_diamond2 is not None:
+        # Convert the coordinates of the center box to the original image coordinates
+        center_diamond2[:, 0, 0] += box2_top_left_x
+        center_diamond2[:, 0, 1] += box2_top_left_y
+
+        # cv2.drawContours(image, [center_diamond2], -1, (0, 255, 0), 2)
+        M2 = cv2.moments(center_diamond2)
+        cx2 = int(M2['m10']/M2['m00'])
+        cy2 = int(M2['m01']/M2['m00'])
+        # print(f"Center diamond 2 coordinates: ({cx2}, {cy2})")
+        # 画出中心点
+        point10_x,point10_y = (cx2 + 60, cy2 - 100)
+        point11_x,point11_y = (cx2 - 60, cy2)
+        point12_x,point12_y = (cx2 - 60, cy2 - 100)
+        point13_x,point13_y = (cx2, cy2 + 100)
+        point14_x,point14_y = (cx2, cy2)
+        point15_x,point15_y = (cx2, cy2 - 100)
+        point16_x,point16_y = (cx2 + 60, cy2 + 100)
+        point17_x,point17_y = (cx2 + 60, cy2)
+        point18_x,point18_y = (cx2 - 60, cy2 + 100)
  
 def read_usb_capture():
     # ser = communication.UART()
@@ -82,6 +194,7 @@ def read_usb_capture():
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
+        process_image(frame)
         # 真实图
         cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
         cv2.rectangle(frame,(point2_x-7,point2_y-7),(point2_x + 7,point2_y + 7),(0,255,0))
