@@ -17,33 +17,97 @@ model_path = 'model/svm_cube_10_10_right.model'
 img_path = 'pic/R/R.png'
 clf = joblib.load(model_path) # 加载模型
 
-# ROI参数，可自行修改
-point1_x = 320
-point1_y = 60
-point2_x = 420
-point2_y = 170
-point3_x = 500
-point3_y = 251
-point4_x = 200
-point4_y = 160
-point5_x = 341
-point5_y = 250
-point6_x = 415
-point6_y = 315
-point7_x = 135
-point7_y = 243
-point8_x = 250
-point8_y = 338
-point9_x = 310
-point9_y = 435
+def process_image(image):
+    global point1_x,point1_y,point2_x,point2_y,point3_x,point3_y,point4_x,point4_y,point5_x,point5_y,point6_x,point6_y,point7_x,point7_y,point8_x,point8_y,point9_x,point9_y
+    # Find the center coordinates of the frame
+    frame_height, frame_width, _ = image.shape
+    center_x = frame_width // 2
+    center_y = frame_height // 2
+
+    # Set the dimensions of the box
+    box_width = 300
+    box_height = 300
+
+    # Calculate the coordinates of the top-left and bottom-right corners of the box
+    top_left_x = center_x - (box_width // 2)
+    top_left_y = center_y - (box_height // 2)
+    bottom_right_x = center_x + (box_width // 2)
+    bottom_right_y = center_y + (box_height // 2)
+
+    # Draw the box on the image
+    # cv2.rectangle(image, (top_left_x, top_left_y), (bottom_right_x, bottom_right_y), (255, 0, 0), 2)
+
+    # Crop the image to the region of interest (ROI)
+    roi = image[top_left_y:bottom_right_y, top_left_x:bottom_right_x]
+
+    # Process the ROI
+    gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    blurred_roi = cv2.GaussianBlur(gray_roi, (5, 5), 0)
+    edges_roi = cv2.Canny(blurred_roi, 50, 150)
+
+    # Find contours in the ROI
+    contours, _ = cv2.findContours(edges_roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    diamond_contours = []
+
+    for contour in contours:
+        # 近似轮廓
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.04 * peri, True)
+
+        # 检查是否为菱形（4个顶点）
+        if len(approx) == 4:
+            area = cv2.contourArea(contour)
+            (x, y, w, h) = cv2.boundingRect(approx)
+            ratio = w / float(h)
+            if ratio >= 0.9 and ratio <= 1.2 and area > 10000 and area < 30000:
+                diamond_contours.append(contour)
+
+    # 假设中心菱形块是面积最大的菱形
+    max_area = 0
+    center_diamond = None
+    print(len(diamond_contours))
+    for contour in diamond_contours:
+        area = cv2.contourArea(contour)
+        if area > max_area:
+            max_area = area
+            center_diamond = contour
+
+    if center_diamond is not None:
+        # 将中心块框的坐标转换为原始图像的坐标
+        center_diamond[:, 0, 0] += top_left_x
+        center_diamond[:, 0, 1] += top_left_y
+
+        # cv2.drawContours(image, [center_diamond], -1, (0, 255, 0), 2)
+        M = cv2.moments(center_diamond)
+        cx = int(M['m10']/M['m00'])
+        cy = int(M['m01']/M['m00'])
+        print(f"Center diamond coordinates: ({cx}, {cy})")
+        point1_x = cx
+        point1_y = cy - 200
+        point2_x = cx + 100
+        point2_y = cy - 100
+        point3_x = cx + 200
+        point3_y = cy
+        point4_x = cx - 100
+        point4_y = cy - 100
+        point5_x = cx
+        point5_y = cy
+        point6_x = cx + 94
+        point6_y = cy + 94
+        point7_x = cx - 200
+        point7_y = cy
+        point8_x = cx - 94
+        point8_y = cy + 94
+        point9_x = cx
+        point9_y = cy + 200
 
 def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(0)
     
     # 设置曝光时间,负值是短
-    cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
-
+    # cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
     
@@ -64,6 +128,7 @@ def read_usb_capture():
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
+        process_image(frame)
         frame_num = frame_num + 1
         # 真实图
         cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
