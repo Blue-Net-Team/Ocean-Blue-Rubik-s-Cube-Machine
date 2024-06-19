@@ -189,10 +189,11 @@ def read_usb_capture():
     cap.set(14,70) #64 锐度 图像增益
     
     # 添加这句是可以用鼠标拖动弹出的窗体
-    cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
+        process_image(frame)
         # 真实图
         cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
         cv2.rectangle(frame,(point2_x-7,point2_y-7),(point2_x + 7,point2_y + 7),(0,255,0))
