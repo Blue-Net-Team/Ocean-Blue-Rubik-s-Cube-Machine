@@ -9,7 +9,7 @@ if ros_path in sys.path:
 import cv2
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
 
 model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down3.model'
@@ -50,15 +50,16 @@ point16_x = 315
 point16_y = 90
 point17_x = 322
 point17_y = 233
-point18_x = 306
-point18_y = 373
+point18_x = 400
+point18_y = 325
  
 def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(3)
     
     # 设置曝光时间,负值是短
-    cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+    # cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE,  3)
 
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
@@ -70,7 +71,7 @@ def read_usb_capture():
     cap.set(14,70) #64 锐度 图像增益
     
     # 添加这句是可以用鼠标拖动弹出的窗体
-    cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     frame_num = 0
     while(cap.isOpened()):
         # 读取摄像头的画面
@@ -96,9 +97,9 @@ def read_usb_capture():
         cv2.rectangle(frame,(point16_x-7,point16_y-7),(point16_x + 7,point16_y + 7),(0,255,0))
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
-        cv2.imshow('real_img', frame)
+        # cv2.imshow('real_img', frame)
         # 按下'q'就退出
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
         if frame_num > 1:
             cv2.imwrite(img_path,frame)
             cap.release()

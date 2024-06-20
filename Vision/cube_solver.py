@@ -2,7 +2,7 @@ import twophase.solver as sv
 import twophase.cubie as cubie
 import time
 import arm_planning
-import kociemba
+# import kociemba
 
 #解算魔方
 def cube_solver(view_state):
@@ -120,7 +120,7 @@ def test():
     cube_state = s
     #K算法
     # st = time.perf_counter()
-    a = kociemba.solve(cube_state)
+    # a = kociemba.solve(cube_state)
     # print(a)
     # et = time.perf_counter()
     # print("spent {:.4f}s.".format((et - st)))
@@ -131,7 +131,7 @@ def test():
     print(cube_solve)
     # et = time.perf_counter()
     # print("spent {:.4f}s.".format((et - st)))
-    return cube_solve, a
+    return cube_solve
 
 # 对于k算法需要进行转换
 def transform(moves):
@@ -159,7 +159,7 @@ def transform(moves):
     return [dic[move] for move in moves]
 
 if __name__ == '__main__':  
-    solve_step, a = test()
+    solve_step = test()
     # r
     # st = time.perf_counter()
     _solve_step = solve_step.split()

@@ -10,7 +10,7 @@ import cv2
 
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
 
 model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_right.model'
@@ -124,7 +124,7 @@ def read_usb_capture():
     # print(cap.get(13))
     # print(cap.get(14))
     # 添加这句是可以用鼠标拖动弹出的窗体
-    cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
@@ -142,9 +142,9 @@ def read_usb_capture():
         cv2.rectangle(frame,(point7_x-7,point7_y-7),(point7_x + 7,point7_y + 7),(0,255,0))
         cv2.rectangle(frame,(point8_x-7,point8_y-7),(point8_x + 7,point8_y + 7),(0,255,0))
         cv2.rectangle(frame,(point9_x-7,point9_y-7),(point9_x + 7,point9_y + 7),(0,255,0))
-        cv2.imshow('real_img', frame)
+        # cv2.imshow('real_img', frame)
         # 按下'q'就退出
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
         if frame_num > 2:
             cv2.imwrite(img_path,frame)
             cap.release()

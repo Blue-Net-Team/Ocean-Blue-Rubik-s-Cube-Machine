@@ -9,12 +9,13 @@ if ros_path in sys.path:
 import cv2
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
-try:
-    import communication
-except:
-    import Vision.communication as communication
+# try:
+sys.path.append('/home/lanwang/rubiks-cube-machine')  # 添加库的路径到系统路径
+import Vision.communication as communication
+# except:
+#     import Vision.communication as communication
 
 sys.path.append("..")
 
@@ -216,13 +217,13 @@ def read_usb_capture():
         cv2.rectangle(frame,(point16_x-7,point16_y-7),(point16_x + 7,point16_y + 7),(0,255,0))
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
-        cv2.imshow('real_img', frame)
+        # cv2.imshow('real_img', frame)
         # 按下'q'之前阻塞进程
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
             # ser.write('LC RC')
-            cv2.imwrite(img_path,frame)
-            cap.release()
-            cv2.destroyAllWindows()
+        cv2.imwrite(img_path,frame)
+        cap.release()
+        cv2.destroyAllWindows()
     return frame
 
 def img2vector(img):
