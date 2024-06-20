@@ -13,8 +13,8 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-model_path = 'model/svm_cube_10_10_left4.model'
-img_path = 'pic/L/L.png'
+model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_left4.model'
+img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/L/L.png'
 clf = joblib.load(model_path) # 加载模型
 
 def process_image(image):
@@ -124,6 +124,8 @@ def read_usb_capture():
         # 读取摄像头的画面
         ret, frame = cap.read()
         process_image(frame)
+        if not (point5_x and point5_y):
+            continue
         frame_num = frame_num + 1
         # 真实图
         cv2.rectangle(frame,(point1_x - 7,point1_y - 7),(point1_x + 7,point1_y + 7),(0,105,0))

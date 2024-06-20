@@ -12,51 +12,46 @@ import joblib
 import matplotlib.pyplot as plt
 import time
 
-model_path = 'model/svm_cube_10_10_down3.model'
-img_path = 'pic/D/D.png'
+model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down3.model'
+img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/D/Dt.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 113
-point1_y = 290
-point2_x = 113
-point2_y = 200
-point3_x = 113
+point1_x = 51
+point1_y = 348
+point2_x = 54
+point2_y = 214
+point3_x = 60
 point3_y = 100
-
-point4_x = 160
-point4_y = 294
-point5_x = 160
+point4_x = 113
+point4_y = 344
+point5_x = 119
 point5_y = 218
-point6_x = 160
+point6_x = 119
 point6_y = 70
-
-point7_x = 300
-point7_y = 320
-point8_x = 309
+point7_x = 193
+point7_y = 344
+point8_x = 199
 point8_y = 226
-point9_x = 316
+point9_x = 202
 point9_y = 70
-
-point10_x = 590
-point10_y = 70
-point11_x = 590
-point11_y = 180
-point12_x = 590
+point10_x = 500
+point10_y = 89
+point11_x = 488
+point11_y = 225
+point12_x = 479
 point12_y = 321
-
-point13_x = 481
+point13_x = 419
 point13_y = 90
-point14_x = 482
-point14_y = 180
-point15_x = 482
-point15_y = 321
-
-point16_x = 400
+point14_x = 409
+point14_y = 205
+point15_x = 425
+point15_y = 359
+point16_x = 315
 point16_y = 90
-point17_x = 400
+point17_x = 322
 point17_y = 233
-point18_x = 400
-point18_y = 325
+point18_x = 306
+point18_y = 373
  
 def read_usb_capture():
     # 选择摄像头的编号
