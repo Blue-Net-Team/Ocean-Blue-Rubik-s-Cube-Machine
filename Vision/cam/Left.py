@@ -13,8 +13,8 @@ import joblib
 # import matplotlib.pyplot as plt
 import time
 
-model_path = 'model/svm_cube_10_10_left4.model'
-img_path = 'pic/L/L.png'
+model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_left4.model'
+img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/L/L.png'
 clf = joblib.load(model_path) # 加载模型
 
 def process_image(image):
