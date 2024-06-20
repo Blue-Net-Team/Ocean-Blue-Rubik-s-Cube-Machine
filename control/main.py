@@ -159,6 +159,7 @@ if __name__ == "__main__":
         str_data_lst = str_data.split(' ')
         # endregion
 
+        t0 = time.time()
         oled.fill(0)
 
         gas_switch.value(1)
@@ -167,8 +168,9 @@ if __name__ == "__main__":
         restore()
         led.off()
 
+        t1 = time.time()
         oled.fill(0)
-        oled.text('Finish', 0, 0)
+        oled.text(f'Finish in {t1-t0}seconds', 0, 0)
         oled.show()
 
         left_cylinder.open()
