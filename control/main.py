@@ -55,7 +55,7 @@ class SteppingMotor:
             msg_send = ID + FD + d_v + a + pul_nums + CHECK        # 发送的消息
             msg_read = b'\x9f'                                     # 完成旋转之后返回的消息
             # endregion
-            
+
             # 发送消息
             self.serial.write(msg_send)
 
@@ -159,6 +159,25 @@ def restore():
             raise ValueError("Invalid sign")
         
 
+def read(HEAD:str='@', TAIL:str='#') -> bytes:
+    # region 接收信号
+    PACKET_HEAD = HEAD.encode('ASCII')
+    PACKET_TAIL = TAIL.encode('ASCII')
+
+    data = b''  # 用于存储接收到的数据
+
+    while True:
+        byte = uart.read(1)
+        if byte == b'' or byte is None:
+            continue
+        if byte == PACKET_HEAD:
+            data = b''
+            continue
+        if byte == PACKET_TAIL:
+            break
+        data += byte
+    return data
+
 if __name__ == "__main__":
     # region 创建对象
     left_motor = SteppingMotor(47, 48, 38)
@@ -179,23 +198,9 @@ if __name__ == "__main__":
     # endregion 
 
     while True:
-        # region 接收信号
-        PACKET_HEAD = b'@'
-        PACKET_TAIL = b'#'
-
-        data = b''  # 用于存储接收到的数据
-
-        while True:
-            byte = uart.read(1)
-            if byte == b'' or byte is None:
-                continue
-            if byte == PACKET_HEAD:
-                data = b''
-            data += byte
-            if byte == PACKET_TAIL:
-                led.value(1)        # 就绪指示灯亮起
-                break
-        str_data = data[1:-1].decode()
+        led.value(1)        # 就绪指示灯亮起
+        data = read()
+        str_data = data.decode()
         str_data_lst = str_data.split(' ')
         # endregion
 
