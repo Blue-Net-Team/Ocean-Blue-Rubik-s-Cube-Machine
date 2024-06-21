@@ -7,55 +7,103 @@ import ssd1306
 
 class SteppingMotor:
     """步进电机"""
-    def __init__(self, stp, en, _dir) -> None:
+    def __init__(self, stp, en, _dir, ifpul=True, tx:int|None=None, rx:int|None=None, _id:int|None=None) -> None:
         """步进电机初始化
         * stp: 步进电机的步进脚
         * en: 步进电机的使能脚
         * dir: 步进电机的方向脚
+        * ifpul: 是否使用脉冲控制步进电机, 默认为True, 如果为False, 则使用串口控制步进电机
+        * tx: 串口发送引脚
+        * rx: 串口接收引脚
+        * id: 串口id, 默认为None, 如果ifpul为False, 则必须指定id(左手1 or 右手2)
         """
         self.stp = Pin(stp, Pin.OUT)
         self.en = Pin(en, Pin.OUT)
         self.dir = Pin(_dir, Pin.OUT)
         self.en.value(1)
-        pass
+
+        self.ifpul = ifpul
+        if self.ifpul:
+            if _id not in [1,2]:
+                raise ValueError("Invalid id, id must be 1 or 2")
+            self.serial = UART(_id, baudrate=9600, tx=tx, rx=rx)       # type: ignore
+            self._id = _id
+        
 
     def rotate(self, sign:str, _stop=25):
-        """步进电机转动
+        """使用脉冲的方式控制步进电机转动
         * sign: 旋转信号
-        * direction: 转动方向
         * _stop: 步进间隔
         """
-        d = {"1": (0.25, 0), "2": (0.5, 0), "3":(0.25, 1)}
-        circle, direction = d[sign]
-        self.dir.value(direction)
+        if not self.ifpul:
+            d = {"1": (800, 0x00), "2": (1600, 0x00), "3":(800, 0x01)}          # 1 means clockwise 90 degree
+                                                                                # 2 means 180 degree
+                                                                                # 3 means anticlockwise 90 degree
+            # region 命令处理
+            ID = self._id.to_bytes(1, byteorder='big')               # 地址位
+            FD = b'\xfd'                                            # 0xfd
+            direction = d[sign][1].to_bytes(1, byteorder='big')     # 方向
+            direction = int.from_bytes(direction, byteorder='big')
+            v= 0x4ff                                                # 0x4ff(最大速度)
+            d_v = (v&0x4ff)|(direction<<8)                           # 方向和速度
+            d_v = d_v.to_bytes(2, byteorder='big')
+            a = 208
+            a = a.to_bytes(1, byteorder='big')                      # 加速度
+            pul_nums = d[sign][0].to_bytes(3, byteorder='big')      # 脉冲数
+            CHECK = b'\x6b'                                         # 校验位
 
-        total_steps = int(3200 * circle)
-        accel_steps = total_steps // 4  # 加速阶段步数
-        decel_steps = total_steps // 4  # 减速阶段步数
-        uniform_steps = total_steps - accel_steps - decel_steps  # 匀速阶段步数
+            msg_send = ID + FD + d_v + a + pul_nums + CHECK        # 发送的消息
+            msg_read = b'\x9f'                                     # 完成旋转之后返回的消息
+            # endregion
+            
+            # 发送消息
+            self.serial.write(msg_send)
 
-        # 加速阶段
-        for i in range(accel_steps):
-            _stop = _stop - i // 5  # 假设每100步加速一次
-            self.stp.value(1)
-            for _ in range(_stop): pass
-            self.stp.value(0)
-            for _ in range(_stop): pass
+            # region 等待旋转完成(接收消息)
+            data = b''  # 用于存储接收到的数据
+            while True:
+                byte = uart.read(1)
+                if byte == b'' or byte is None:
+                    continue
+                if byte == ID:
+                    data = b''
+                data += byte
+                if byte == CHECK:
+                    if data == msg_read:
+                        break
+            # endregion
+        else:
+            d = {"1": (0.25, 0), "2": (0.5, 0), "3":(0.25, 1)}
+            circle, direction = d[sign]
+            self.dir.value(direction)
 
-        # 匀速阶段
-        for i in range(uniform_steps):
-            self.stp.value(1)
-            for _ in range(_stop): pass
-            self.stp.value(0)
-            for _ in range(_stop): pass
+            total_steps = int(3200 * circle)
+            accel_steps = total_steps // 4  # 加速阶段步数
+            decel_steps = total_steps // 4  # 减速阶段步数
+            uniform_steps = total_steps - accel_steps - decel_steps  # 匀速阶段步数
 
-        # 减速阶段
-        for i in range(decel_steps):
-            _stop = _stop + i // 50  # 假设每100步减速一次
-            self.stp.value(1)
-            for _ in range(_stop): pass
-            self.stp.value(0)
-            for _ in range(_stop): pass
+            # 加速阶段
+            for i in range(accel_steps):
+                _stop = _stop - i // 5  # 假设每100步加速一次
+                self.stp.value(1)
+                for _ in range(_stop): pass
+                self.stp.value(0)
+                for _ in range(_stop): pass
+
+            # 匀速阶段
+            for i in range(uniform_steps):
+                self.stp.value(1)
+                for _ in range(_stop): pass
+                self.stp.value(0)
+                for _ in range(_stop): pass
+
+            # 减速阶段
+            for i in range(decel_steps):
+                _stop = _stop + i // 50  # 假设每100步减速一次
+                self.stp.value(1)
+                for _ in range(_stop): pass
+                self.stp.value(0)
+                for _ in range(_stop): pass
 
 
 class ClampCylinder:
@@ -72,8 +120,8 @@ class ClampCylinder:
         self.pin.value(0)
         pass
 
-
-uart = UART(1, baudrate=9600, tx=8, rx=7)       # type: ignore
+# 与Jetson Nano通信的串口对象
+uart = UART(0, baudrate=9600, tx=8, rx=7)       # type: ignore
 
 def restore():
     """还原
