@@ -111,14 +111,6 @@ def restore():
             raise ValueError("Invalid sign")
         
 
-def send():
-    """发送数据
-    ----
-    按下按钮触发"""
-    data = bytearray(b'@OK#')
-    uart.write(data)
-
-
 if __name__ == "__main__":
     # region 创建对象
     left_motor = SteppingMotor(47, 48, 38)
