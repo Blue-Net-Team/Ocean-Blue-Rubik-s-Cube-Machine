@@ -149,8 +149,10 @@ class ROILocater(object):
             json.dump(self.d, f)
 
 if __name__ == '__main__':
+    WINDOW_NAME = 'frame'
+
     cap = cv2.VideoCapture(0)
-    locater = ROILocater(window_name='frame')
+    locater = ROILocater(window_name=WINDOW_NAME)
 
     locater.createTrackbar()
 
@@ -161,6 +163,6 @@ if __name__ == '__main__':
 
         frame = locater.drawROI(frame)
 
-        cv2.imshow('frame', frame)
+        cv2.imshow(WINDOW_NAME, frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
