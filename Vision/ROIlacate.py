@@ -11,12 +11,14 @@ class ROILocater(object):
     * 用滑块调整ROI的方法
     * 使用鼠标点击就可以记录对应ID的ROI位置的方法
     """
-    def __init__(self, num_id:int=9, window_name:str|None=None, cap_id:int=0) -> None:
+    def __init__(self, num_id:int=9, window_name:str|None=None, cap_id:int=0, savapath:str|None=None) -> None:
         """
         类初始化
         ----
         * num_id: ROI的数量，默认为9
-        * window_name: 窗口名称，默认为None
+        * window_name: 窗口名称，默认为None，需要使用鼠标点击需要传入窗口名，与imshow的窗口名一致
+        * cap_id: 摄像头ID，默认为0
+        * savapath: 保存路径，默认为None
         """
         cap = cv2.VideoCapture(cap_id)
         _, frame = cap.read()
@@ -33,6 +35,8 @@ class ROILocater(object):
 
         self.id = 0
 
+        self.savapath = savapath
+
         self.d = dict()
         self.num_id = num_id
         for i in range(self.num_id):
@@ -42,7 +46,6 @@ class ROILocater(object):
             cv2.namedWindow(window_name)
             cv2.setMouseCallback(window_name, self.mouse_action)
 
-    # 鼠标回调函数
     def mouse_action(self, event, x, y, flags, param):
         """鼠标回调函数
         ----
@@ -58,7 +61,7 @@ class ROILocater(object):
             # 写入字典
             self.d[self.id] = {'x': self.x, 'y': self.y, 'w': self.w, 'h': self.h}
             # 保存
-            self.save()
+            self.save(self.savapath)
 
     def createTrackbar(self):
         """
@@ -103,7 +106,7 @@ class ROILocater(object):
             # 修改字典
             self.d[self.id] = {'x': self.x, 'y': self.y, 'w': self.w, 'h': self.h}
             # 将ROI信息保
-            self.save()
+            self.save(self.savapath)
 
             # 重置滑动条
             cv2.setTrackbarPos('OK', 'ROI Selector', 0)
@@ -140,11 +143,13 @@ class ROILocater(object):
             
         return img
     
-    def save(self, path:str='ROI.json'):
+    def save(self, path:str|None=None):
         """
         保存ROI信息到json文件
         * path: 保存路径
         """
+        if not path:
+            path = 'ROI.json'
         with open(path, 'w') as f:
             json.dump(self.d, f)
 
