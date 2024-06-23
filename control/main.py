@@ -1,127 +1,11 @@
 import time
-from machine import UART
-from machine import Pin
+from machine import Pin, UART
 from machine import I2C
 import ssd1306
+from arm import SteppingMotor, ClampCylinder
 
 
-class SteppingMotor:
-    """步进电机"""
-    def __init__(self, stp, en, _dir, ifpul=True, tx:int|None=None, rx:int|None=None, _id:int|None=None) -> None:
-        """步进电机初始化
-        * stp: 步进电机的步进脚
-        * en: 步进电机的使能脚
-        * dir: 步进电机的方向脚
-        * ifpul: 是否使用脉冲控制步进电机, 默认为True, 如果为False, 则使用串口控制步进电机
-        * tx: 串口发送引脚
-        * rx: 串口接收引脚
-        * id: 串口id, 默认为None, 如果ifpul为False, 则必须指定id(左手1 or 右手2)
-        """
-        self.stp = Pin(stp, Pin.OUT)
-        self.en = Pin(en, Pin.OUT)
-        self.dir = Pin(_dir, Pin.OUT)
-        self.en.value(1)
 
-        self.ifpul = ifpul
-        if self.ifpul:
-            if _id not in [1,2]:
-                raise ValueError("Invalid id, id must be 1 or 2")
-            self.serial = UART(_id, baudrate=9600, tx=tx, rx=rx)       # type: ignore
-            self._id = _id
-        
-
-    def rotate(self, sign:str, _stop=25):
-        """使用脉冲的方式控制步进电机转动
-        * sign: 旋转信号
-        * _stop: 步进间隔
-        """
-        if not self.ifpul:
-            d = {"1": (800, 0x00), "2": (1600, 0x00), "3":(800, 0x01)}          # 1 means clockwise 90 degree
-                                                                                # 2 means 180 degree
-                                                                                # 3 means anticlockwise 90 degree
-            # region 命令处理
-            ID = self._id.to_bytes(1, byteorder='big')               # 地址位
-            FD = b'\xfd'                                            # 0xfd
-            direction = d[sign][1].to_bytes(1, byteorder='big')     # 方向
-            direction = int.from_bytes(direction, byteorder='big')
-            v= 0x4ff                                                # 0x4ff(最大速度)
-            d_v = (v&0x4ff)|(direction<<8)                           # 方向和速度
-            d_v = d_v.to_bytes(2, byteorder='big')
-            a = 208
-            a = a.to_bytes(1, byteorder='big')                      # 加速度
-            pul_nums = d[sign][0].to_bytes(3, byteorder='big')      # 脉冲数
-            CHECK = b'\x6b'                                         # 校验位
-
-            msg_send = ID + FD + d_v + a + pul_nums + CHECK        # 发送的消息
-            msg_read = b'\x9f'                                     # 完成旋转之后返回的消息
-            # endregion
-
-            # 发送消息
-            self.serial.write(msg_send)
-
-            # region 等待旋转完成(接收消息)
-            data = b''  # 用于存储接收到的数据
-            while True:
-                byte = uart.read(1)
-                if byte == b'' or byte is None:
-                    continue
-                if byte == ID:
-                    data = b''
-                data += byte
-                if byte == CHECK:
-                    if data == msg_read:
-                        break
-            # endregion
-        else:
-            d = {"1": (0.25, 0), "2": (0.5, 0), "3":(0.25, 1)}
-            circle, direction = d[sign]
-            self.dir.value(direction)
-
-            total_steps = int(3200 * circle)
-            accel_steps = total_steps // 4  # 加速阶段步数
-            decel_steps = total_steps // 4  # 减速阶段步数
-            uniform_steps = total_steps - accel_steps - decel_steps  # 匀速阶段步数
-
-            # 加速阶段
-            for i in range(accel_steps):
-                _stop = _stop - i // 5  # 假设每100步加速一次
-                self.stp.value(1)
-                for _ in range(_stop): pass
-                self.stp.value(0)
-                for _ in range(_stop): pass
-
-            # 匀速阶段
-            for i in range(uniform_steps):
-                self.stp.value(1)
-                for _ in range(_stop): pass
-                self.stp.value(0)
-                for _ in range(_stop): pass
-
-            # 减速阶段
-            for i in range(decel_steps):
-                _stop = _stop + i // 50  # 假设每100步减速一次
-                self.stp.value(1)
-                for _ in range(_stop): pass
-                self.stp.value(0)
-                for _ in range(_stop): pass
-
-
-class ClampCylinder:
-    """气缸夹爪"""
-    def __init__(self,_pin) -> None:
-        self.pin = Pin(_pin, Pin.OUT)
-        pass
-
-    def open(self):
-        self.pin.value(1)
-        pass
-
-    def close(self):
-        self.pin.value(0)
-        pass
-
-# 与Jetson Nano通信的串口对象
-uart = UART(0, baudrate=9600, tx=8, rx=7)       # type: ignore
 
 def restore():
     """还原
@@ -157,17 +41,17 @@ def restore():
             time.sleep(0.3)
         else:
             raise ValueError("Invalid sign")
+        # input()
         
 
-def read(HEAD:str='@', TAIL:str='#') -> bytes:
-    # region 接收信号
+def read(ser:UART, HEAD:str='@', TAIL:str='#') -> bytes:
     PACKET_HEAD = HEAD.encode('ASCII')
     PACKET_TAIL = TAIL.encode('ASCII')
 
     data = b''  # 用于存储接收到的数据
 
     while True:
-        byte = uart.read(1)
+        byte = ser.read(1)
         if byte == b'' or byte is None:
             continue
         if byte == PACKET_HEAD:
@@ -180,48 +64,72 @@ def read(HEAD:str='@', TAIL:str='#') -> bytes:
 
 if __name__ == "__main__":
     # region 创建对象
-    left_motor = SteppingMotor(47, 48, 38)
-    right_motor = SteppingMotor(40, 39, 21)
+    left_cylinder = ClampCylinder(11)
+    right_cylinder = ClampCylinder(12)
+    print("Cylinder created")
 
-    left_cylinder = ClampCylinder(17)
-    right_cylinder = ClampCylinder(16)
-
-    gas_switch = Pin(15, Pin.OUT)
+    gas_switch = Pin(41, Pin.OUT)
+    print("Gas switch created")
 
     led = Pin(9, Pin.OUT)
+    print("LED created")
 
-    i2c = I2C(0, scl=Pin(5), sda=Pin(4))
+    IIC = I2C(0, scl=Pin(5), sda=Pin(4))
+    print("IIC created")
 
     oled_width = 128
     oled_height = 64
-    oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
+    oled = ssd1306.SSD1306_I2C(oled_width, oled_height, IIC)
+    print("OLED created")
     # endregion 
 
     while True:
-        led.value(1)        # 就绪指示灯亮起
-        data = read()
+        # 与Jetson Nano通信的串口对象
+        uart = UART(1, baudrate=9600, tx=8, rx=7)       # type: ignore
+        # region 读取数据
+        data = read(uart)
         str_data = data.decode()
         str_data_lst = str_data.split(' ')
         # endregion
+        print(str_data_lst)
+        del uart
+        print('uart release')
 
-        t0 = time.time()
-        oled.fill(0)
+        left_motor = SteppingMotor(stp=47, en=48, _dir=38)
+        right_motor = SteppingMotor(stp=40, en=39, _dir=21)
+        print("Motor created")
 
-        gas_switch.value(1)
-        led.on()
+        print(str_data_lst)
+
+        t0 = time.time()        # 计时开始
+        oled.fill(0)            # 清屏
+
+        gas_switch.value(1)     # 打开气源
         oled.text(f'{len(str_data_lst)} steps', 0, 0)
-        restore()
-        led.off()
+        led.on()        # 就绪指示灯亮起
+        restore()       # 还原
+        led.off()       # 就绪指示灯熄灭
 
-        t1 = time.time()
-        oled.fill(0)
-        oled.text(f'Finish in {t1-t0}seconds', 0, 0)
-        oled.show()
+        t1 = time.time()        # 计时结束
+        oled.fill(0)            # 清屏
+        oled.text(f'Finish in', 0, 0)        # 显示时间
+        oled.text(f'{t1-t0}', 0, 10)
+        oled.text(f'seconds', 0, 20)
+        oled.show()        # 刷新屏幕
 
+        # 打开两个手指
         left_cylinder.open()
         right_cylinder.open()
 
+        # 关闭气源
         gas_switch.value(0)
 
+        time.sleep(1)       # 等待1s
+
+        # 关闭两个手指
         left_cylinder.close()
         right_cylinder.close()
+
+        del left_motor
+        del right_motor
+        print("Motor release")
