@@ -5,8 +5,6 @@ import ssd1306
 from arm import SteppingMotor, ClampCylinder
 
 
-
-
 def restore():
     """还原
     ----
@@ -14,6 +12,8 @@ def restore():
     for _sign in str_data_lst:
         oled.fill(0)
         oled.text(f'{_sign}', 0, 10)
+        oled.show()
+        print(_sign)
         sign1 = _sign[0]        # L or R
         sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
         if sign1 == "L":
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         str_data = data.decode()
         str_data_lst = str_data.split(' ')
         # endregion
-        print(str_data_lst)
+        # print(str_data_lst)
         del uart
         print('uart release')
 
