@@ -17,7 +17,7 @@ def crack():
 
     color_state4 = Left.detect_color()
     [color_state5,color_state6] = Down.detect_color()
-    color_state = color_state2 + color_state1 + color_state3 + color_state5 + color_state4 + color_state6
+    color_state = color_state3 + color_state1 + color_state2 + color_state6 + color_state4 + color_state5
     color_state = cube_solver.color2view(color_state)
     print("color state is:" + color_state)
 
@@ -34,12 +34,16 @@ def crack():
     solve_step = cube_solver.cube_solver(color_state)
     _solve_step = solve_step.split()
     _solve_step = _solve_step[:-1]
+    print("the orign step is:", _solve_step)
     real_solve, cost = cube_solver._SolutionTransAndOptimize(_solve_step)
     arm_step = arm_planning.planning(real_solve)  # ['RO', 'L2', 'RC', 'R2']
-    
+    print("--------------------------------------------")
+    print("the optimize step is:",real_solve)
+    print("--------------------------------------------")
+    print("arm_step:",arm_step)
     step_str = ''
-    for i in arm_step:
-        if i != arm_step[-1]:
+    for index,i in enumerate(arm_step):
+        if index != len(arm_step) - 1:
             step_str += i + ' '
         else:
             step_str += i
@@ -51,8 +55,4 @@ def crack():
 Transmitter = communication.UART()
 
 if __name__ == '__main__':
-    # TODO:最好拉高一个引脚电平来点亮一个LED从而指示jetson nano已经就绪
-    while True:
-        sign = Transmitter.read()
-        if sign == 'OK':
-            crack()
+    crack()
