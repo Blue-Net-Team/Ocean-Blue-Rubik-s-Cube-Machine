@@ -16,42 +16,42 @@ model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down
 img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/D/Dt.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 51
-point1_y = 348
-point2_x = 54
-point2_y = 214
-point3_x = 60
-point3_y = 100
-point4_x = 113
-point4_y = 344
-point5_x = 119
+point1_x = 52
+point1_y = 345
+point2_x = 51
+point2_y = 230
+point3_x = 54
+point3_y = 120
+point4_x = 119
+point4_y = 370
+point5_x = 122
 point5_y = 218
-point6_x = 119
-point6_y = 70
-point7_x = 193
-point7_y = 344
-point8_x = 199
-point8_y = 226
-point9_x = 202
+point6_x = 125
+point6_y = 87
+point7_x = 196
+point7_y = 375
+point8_x = 205
+point8_y = 223
+point9_x = 205
 point9_y = 70
-point10_x = 500
-point10_y = 89
+point10_x = 491
+point10_y = 111
 point11_x = 488
-point11_y = 225
-point12_x = 479
-point12_y = 321
+point11_y = 232
+point12_x = 488
+point12_y = 332
 point13_x = 419
-point13_y = 90
-point14_x = 409
-point14_y = 205
-point15_x = 425
-point15_y = 359
-point16_x = 315
-point16_y = 90
-point17_x = 322
-point17_y = 233
-point18_x = 400
-point18_y = 325
+point13_y = 100
+point14_x = 416
+point14_y = 225
+point15_x = 416
+point15_y = 357
+point16_x = 328
+point16_y = 73
+point17_x = 318
+point17_y = 221
+point18_x = 318
+point18_y = 382
  
 def read_usb_capture():
     # 选择摄像头的编号
@@ -64,11 +64,11 @@ def read_usb_capture():
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
     
-    cap.set(10,-40) #0 亮度
-    cap.set(11,50) #50 对比度
+    cap.set(10,-15) #0 亮度
+    cap.set(11,70) #50 对比度
     cap.set(12,64) #64 饱和度
     cap.set(13,0) #0 色调
-    cap.set(14,70) #64 锐度 图像增益
+    cap.set(14,74) #64 锐度 图像增益
     
     # 添加这句是可以用鼠标拖动弹出的窗体
     # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
@@ -96,11 +96,11 @@ def read_usb_capture():
         cv2.rectangle(frame,(point15_x-7,point15_y-7),(point15_x + 7,point15_y + 7),(0,255,0))
         cv2.rectangle(frame,(point16_x-7,point16_y-7),(point16_x + 7,point16_y + 7),(0,255,0))
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
-        cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
+        cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0)) """
         # cv2.imshow('real_img', frame)
         # 按下'q'就退出
         # cv2.waitKey(1)
-        if frame_num > 1:
+        if frame_num > 2:
             cv2.imwrite(img_path,frame)
             cap.release()
             cv2.destroyAllWindows()
