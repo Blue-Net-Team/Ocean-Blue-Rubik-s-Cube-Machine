@@ -159,11 +159,9 @@ def read_usb_capture():
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
         cv2.putText(frame, '18', (point18_x-15, point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
         # cv2.imshow('real_img', frame)
-        # 按下'q'之前阻塞进程
-        if input("Press 'enter' to quit:") == '':
-            cv2.imwrite(img_path,frame)
-            cap.release()
-            cv2.destroyAllWindows()
+        cv2.imwrite(img_path,frame)
+        cap.release()
+        cv2.destroyAllWindows()
     return frame
 
 def img2vector(img):
