@@ -97,13 +97,15 @@ class ROILocater(object):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.x = x-self.w//2
             self.y = y-self.h//2
+            self.d[self.id] = {'x': self.x, 'y': self.y, 'w': self.w, 'h': self.h}
+            self.id += 1
             # 更新滑块
+            print(f'ID{self.id}, x:{self.x}, y:{self.y} clicked!')
             cv2.setTrackbarPos('x', 'ROI Selector', self.x)
             cv2.setTrackbarPos('y', 'ROI Selector', self.y)
-            print(f'ID{self.id}, x:{self.x}, y:{self.y} clicked!')
+            cv2.setTrackbarPos('ID', 'ROI Selector', self.id)
 
             # 写入字典
-            self.d[self.id] = {'x': self.x, 'y': self.y, 'w': self.w, 'h': self.h}
             # 保存
             self.save(self.savapath)
 
