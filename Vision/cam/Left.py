@@ -1,4 +1,5 @@
 #!/usr/bin/python3.8
+import json
 import sys
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
@@ -17,24 +18,35 @@ model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_left
 img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/L/L.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 92
-point1_y = 220
-point2_x = 211
-point2_y = 140
-point3_x = 304
-point3_y = 40
-point4_x = 229
-point4_y = 317
-point5_x = 330
-point5_y = 228
-point6_x = 426
-point6_y = 123
-point7_x = 320
-point7_y = 445
-point8_x = 402
-point8_y = 319
-point9_x = 540
-point9_y = 232
+# 从json文件中读取ROI信息
+with open('./L.json', 'r') as f:
+    ROI = json.load(f)
+    point1_x = ROI['1']['x']
+    point1_y = ROI['1']['y']
+
+    point2_x = ROI['2']['x']
+    point2_y = ROI['2']['y']
+
+    point3_x = ROI['3']['x']
+    point3_y = ROI['3']['y']
+
+    point4_x = ROI['4']['x']
+    point4_y = ROI['4']['y']
+
+    point5_x = ROI['5']['x']
+    point5_y = ROI['5']['y']
+
+    point6_x = ROI['6']['x']
+    point6_y = ROI['6']['y']
+
+    point7_x = ROI['7']['x']
+    point7_y = ROI['7']['y']
+
+    point8_x = ROI['8']['x']
+    point8_y = ROI['8']['y']
+
+    point9_x = ROI['9']['x']
+    point9_y = ROI['9']['y']
 
 def read_usb_capture():
     # 选择摄像头的编号
@@ -61,15 +73,32 @@ def read_usb_capture():
         
         frame_num = frame_num + 1
         # 真实图
-        """ cv2.rectangle(frame,(point1_x - 7,point1_y - 7),(point1_x + 7,point1_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point2_x - 7,point2_y - 7),(point2_x + 7,point2_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point3_x - 7,point3_y - 7),(point3_x + 7,point3_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point4_x - 7,point4_y - 7),(point4_x + 7,point4_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point5_x - 7,point5_y - 7),(point5_x + 7,point5_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point6_x - 7,point6_y - 7),(point6_x + 7,point6_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point7_x - 7,point7_y - 7),(point7_x + 7,point7_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point8_x - 7,point8_y - 7),(point8_x + 7,point8_y + 7),(0,105,0))
-        cv2.rectangle(frame,(point9_x - 7,point9_y - 7),(point9_x + 7,point9_y + 7),(0,105,0)) """
+        cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
+        cv2.putText(frame, '1', (point1_x-10, point1_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point2_x-7,point2_y-7),(point2_x + 7,point2_y + 7),(0,255,0))
+        cv2.putText(frame, '2', (point2_x-10, point2_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point3_x-7,point3_y-7),(point3_x + 7,point3_y + 7),(0,255,0))
+        cv2.putText(frame, '3', (point3_x-10, point3_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point4_x-7,point4_y-7),(point4_x + 7,point4_y + 7),(0,255,0))
+        cv2.putText(frame, '4', (point4_x-10, point4_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point5_x-7,point5_y-7),(point5_x + 7,point5_y + 7),(0,255,0))
+        cv2.putText(frame, '5', (point5_x-10, point5_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point6_x-7,point6_y-7),(point6_x + 7,point6_y + 7),(0,255,0))
+        cv2.putText(frame, '6', (point6_x-10, point6_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point7_x-7,point7_y-7),(point7_x + 7,point7_y + 7),(0,255,0))
+        cv2.putText(frame, '7', (point7_x-10, point7_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point8_x-7,point8_y-7),(point8_x + 7,point8_y + 7),(0,255,0))
+        cv2.putText(frame, '8', (point8_x-10, point8_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point9_x-7,point9_y-7),(point9_x + 7,point9_y + 7),(0,255,0))
+        cv2.putText(frame, '9', (point9_x-10, point9_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
         # cv2.imshow('real_img', frame)
         # 按下'q'就退出
         # cv2.waitKey(1)

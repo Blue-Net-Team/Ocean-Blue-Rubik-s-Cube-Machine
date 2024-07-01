@@ -1,4 +1,5 @@
 #!/usr/bin/python3.8
+import json
 import sys
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
@@ -16,42 +17,62 @@ model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down
 img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/D/Dt.png'
 clf = joblib.load(model_path) # 加载模型
 
-point1_x = 52
-point1_y = 345
-point2_x = 51
-point2_y = 230
-point3_x = 54
-point3_y = 120
-point4_x = 119
-point4_y = 370
-point5_x = 122
-point5_y = 218
-point6_x = 125
-point6_y = 87
-point7_x = 196
-point7_y = 375
-point8_x = 205
-point8_y = 223
-point9_x = 205
-point9_y = 70
-point10_x = 491
-point10_y = 111
-point11_x = 488
-point11_y = 232
-point12_x = 488
-point12_y = 332
-point13_x = 419
-point13_y = 100
-point14_x = 416
-point14_y = 225
-point15_x = 416
-point15_y = 357
-point16_x = 328
-point16_y = 73
-point17_x = 318
-point17_y = 221
-point18_x = 318
-point18_y = 382
+# 从json文件中读取ROI信息
+with open('./D.json', 'r') as f:
+    ROI = json.load(f)
+    point1_x = ROI['1']['x']
+    point1_y = ROI['1']['y']
+
+    point2_x = ROI['2']['x']
+    point2_y = ROI['2']['y']
+
+    point3_x = ROI['3']['x']
+    point3_y = ROI['3']['y']
+
+    point4_x = ROI['4']['x']
+    point4_y = ROI['4']['y']
+
+    point5_x = ROI['5']['x']
+    point5_y = ROI['5']['y']
+
+    point6_x = ROI['6']['x']
+    point6_y = ROI['6']['y']
+
+    point7_x = ROI['7']['x']
+    point7_y = ROI['7']['y']
+
+    point8_x = ROI['8']['x']
+    point8_y = ROI['8']['y']
+
+    point9_x = ROI['9']['x']
+    point9_y = ROI['9']['y']
+
+    point10_x = ROI['10']['x']
+    point10_y = ROI['10']['y']
+
+    point11_x = ROI['11']['x']
+    point11_y = ROI['11']['y']
+
+    point12_x = ROI['12']['x']
+    point12_y = ROI['12']['y']
+
+    point13_x = ROI['13']['x']
+    point13_y = ROI['13']['y']
+
+    point14_x = ROI['14']['x']
+    point14_y = ROI['14']['y']
+
+    point15_x = ROI['15']['x']
+    point15_y = ROI['15']['y']
+
+    point16_x = ROI['16']['x']
+    point16_y = ROI['16']['y']
+
+    point17_x = ROI['17']['x']
+    point17_y = ROI['17']['y']
+
+    point18_x = ROI['18']['x']
+    point18_y = ROI['18']['y']
  
 def read_usb_capture():
     # 选择摄像头的编号
@@ -79,24 +100,58 @@ def read_usb_capture():
         frame_num = frame_num + 1
         # 真实图
         cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
+        cv2.putText(frame, '1', (point1_x-10, point1_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point2_x-7,point2_y-7),(point2_x + 7,point2_y + 7),(0,255,0))
+        cv2.putText(frame, '2', (point2_x-10, point2_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point3_x-7,point3_y-7),(point3_x + 7,point3_y + 7),(0,255,0))
+        cv2.putText(frame, '3', (point3_x-10, point3_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point4_x-7,point4_y-7),(point4_x + 7,point4_y + 7),(0,255,0))
+        cv2.putText(frame, '4', (point4_x-10, point4_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point5_x-7,point5_y-7),(point5_x + 7,point5_y + 7),(0,255,0))
+        cv2.putText(frame, '5', (point5_x-10, point5_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point6_x-7,point6_y-7),(point6_x + 7,point6_y + 7),(0,255,0))
+        cv2.putText(frame, '6', (point6_x-10, point6_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point7_x-7,point7_y-7),(point7_x + 7,point7_y + 7),(0,255,0))
+        cv2.putText(frame, '7', (point7_x-10, point7_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point8_x-7,point8_y-7),(point8_x + 7,point8_y + 7),(0,255,0))
+        cv2.putText(frame, '8', (point8_x-10, point8_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point9_x-7,point9_y-7),(point9_x + 7,point9_y + 7),(0,255,0))
+        cv2.putText(frame, '9', (point9_x-10, point9_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
         cv2.rectangle(frame,(point10_x-7,point10_y-7),(point10_x + 7,point10_y + 7),(0,255,0))
+        cv2.putText(frame, '10', (point10_x-15, point10_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point11_x-7,point11_y-7),(point11_x + 7,point11_y + 7),(0,255,0))
+        cv2.putText(frame, '11', (point11_x-15, point11_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point12_x-7,point12_y-7),(point12_x + 7,point12_y + 7),(0,255,0))
+        cv2.putText(frame, '12', (point12_x-15, point12_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point13_x-7,point13_y-7),(point13_x + 7,point13_y + 7),(0,255,0))
+        cv2.putText(frame, '13', (point13_x-15, point13_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point14_x-7,point14_y-7),(point14_x + 7,point14_y + 7),(0,255,0))
+        cv2.putText(frame, '14', (point14_x-15, point14_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point15_x-7,point15_y-7),(point15_x + 7,point15_y + 7),(0,255,0))
+        cv2.putText(frame, '15', (point15_x-15, point15_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point16_x-7,point16_y-7),(point16_x + 7,point16_y + 7),(0,255,0))
+        cv2.putText(frame, '16', (point16_x-15, point16_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
         cv2.rectangle(frame,(point17_x-7,point17_y-7),(point17_x + 7,point17_y + 7),(0,255,0))
-        cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0)) """
+        cv2.putText(frame, '17', (point17_x-15, point17_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+        cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
+        cv2.putText(frame, '18', (point18_x-15, point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
         # cv2.imshow('real_img', frame)
         # 按下'q'就退出
         # cv2.waitKey(1)
