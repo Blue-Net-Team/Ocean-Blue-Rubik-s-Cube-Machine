@@ -1,3 +1,27 @@
+r"""
+*********************************************
+                   _ooOoo_
+                  o8888888o
+                  88" . "88
+                  (| -_- |)
+                  O\  =  /O
+               ____/`---'\____
+             .'  \\|     |//  `.
+            /  \\|||  :  |||//  \
+           /  _||||| -:- |||||-  \
+           |   | \\\  -  /// |   |
+           | \_|  ''\---/''  |   |
+           \  .-\__  `-`  ___/-. /
+         ___`. .'  /--.--\  `. . __
+      ."" '&lt;  `.___\_&lt;|>_/___.'  >'"".
+     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+     \  \ `-.   \_ __\ /__ _/   .-` /  /
+======`-.____`-.___\_____/___.-`____.-'======
+                   `=---='
+
+			   佛祖镇楼 永无BUG
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""
 import time
 from machine import Pin, UART
 from machine import I2C
@@ -9,13 +33,37 @@ def restore():
     """还原
     ----
     收到信号触发"""
-    for _sign in str_data_lst:
+    for index, now_step in enumerate(str_data_lst):
+        if len(now_step) != 2:
+            oled.fill(0)
+            oled.text("Invalid step", 0, 0)
+            oled.show()
+            print("Invalid step")
+            return
         oled.fill(0)
-        oled.text(f'{_sign}', 0, 10)
+        oled.text(f'{now_step}', 0, 10)
         oled.show()
-        print(_sign)
-        sign1 = _sign[0]        # L or R
-        sign2 = _sign[1]        # ["1", "2", "3", "O", "C"]
+        print(now_step)
+        sign1 = now_step[0]        # L or R
+        sign2 = now_step[1]        # ["1", "2", "3", "O", "C"]
+        try:
+            next_step = str_data_lst[index+1]
+        except IndexError:
+            next_step = [None, None]
+
+        if next_step[0]!=sign1:     # 下一步在不同手臂
+            # t1:手指张和后的延迟
+            # t2:手腕旋转后的延迟
+            t1=0.1
+            t2=0.225
+            if next_step[1] in ['1', '2', '3'] and now_step[1] in ['O']:        # [LO,R1,LC]
+                t1=0.07
+            if now_step[1] in ['1', '2', '3'] and next_step[1] in ['C']:
+                t2=0.25
+        else:
+            t1=0.16
+            t2=0.23
+
         if sign1 == "L":
             motor = left_motor
             cylinder = left_cylinder
@@ -25,22 +73,30 @@ def restore():
             cylinder = right_cylinder
 
         else:
-            raise ValueError("Invalid sign")
+            oled.fill(0)
+            oled.text("Invalid step", 0, 0)
+            oled.show()
+            print("Invalid step")
+            return
 
         if sign2 in ["O", "C"]:
             if sign2 == 'O':
                 cylinder.open()
             if sign2 == "C":
                 cylinder.close()
-            time.sleep(0.1)        # 0.15可用 5个压    0.1 6个压测试
+            time.sleep(t1)        # 0.15可用 5个压    0.1 6个压测试
         elif sign2 in ['1','2','3']:
             if sign2 in ["1", "3"]:
                 motor.rotate(sign2, 0)     # 5
             elif sign2 == "2":
                 motor.rotate(sign2, 0)      # 5
-            time.sleep(0.3)
+            time.sleep(t2)
         else:
-            raise ValueError("Invalid sign")
+            oled.fill(0)
+            oled.text("Invalid step", 0, 0)
+            oled.show()
+            print("Invalid step")
+            return
         # input()
         
 
