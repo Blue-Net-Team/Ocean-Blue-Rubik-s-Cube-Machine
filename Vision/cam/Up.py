@@ -4,21 +4,12 @@ import sys
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
 if ros_path in sys.path:
-
     sys.path.remove(ros_path)
 
 import cv2
 import numpy as np
 import joblib
-# import matplotlib.pyplot as plt
 import time
-# try:
-sys.path.append('/home/lanwang/rubiks-cube-machine')  # 添加库的路径到系统路径
-import Vision.communication as communication
-# except:
-#     import Vision.communication as communication
-
-sys.path.append("..")
 
 model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_up2.model'
 img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/U/Ut.png'
@@ -82,24 +73,20 @@ with open('./U.json', 'r') as f:
     point18_y = ROI['18']['y']
  
 def read_usb_capture():
-    # ser = communication.UART()
     # 选择摄像头的编号
     cap = cv2.VideoCapture(1)
-    
-    # 设置曝光时间,负值是短
-    # cap.set(cv2.CAP_PROP_EXPOSURE, -1200)
 
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE,  3)
-    cap.set(10,-30) #0 liangdu
-    cap.set(11,90) #50 duibidu
-    cap.set(12,70) #64 baohe
-    cap.set(13,0) #0 sediao
-    cap.set(14,100) #64 ruidu
+    # 自动曝光
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
     
-    # 添加这句是可以用鼠标拖动弹出的窗体
-    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    # cap.set(10,-30) #0 亮度
+    cap.set(11,90) #50 对比度
+    cap.set(12,70) #64 饱和度
+    cap.set(13,0) #0 色调
+    cap.set(14,100) #64 锐度
+    
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
@@ -158,7 +145,7 @@ def read_usb_capture():
 
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
         cv2.putText(frame, '18', (point18_x-15, point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-        # cv2.imshow('real_img', frame)
+
         cv2.imwrite(img_path,frame)
         cap.release()
         cv2.destroyAllWindows()
@@ -236,7 +223,6 @@ def detect_color():
     preResult17 = clf.predict(img2arr17)
     preResult18 = clf.predict(img2arr18)
 
-
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
     print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
@@ -245,8 +231,7 @@ def detect_color():
     
     et = time.perf_counter()
     print("spent {:.4f}s.".format((et - st)))
-    # plt.imshow(img)
-    # plt.show()
+
     color_state1 = preResult9[0]+preResult8[0]+preResult7[0]+preResult6[0]+preResult5[0]+preResult4[0]+preResult3[0]+preResult2[0]+preResult1[0]
     color_state2 = preResult18[0]+preResult17[0]+preResult16[0]+preResult15[0]+preResult14[0]+preResult13[0]+preResult12[0]+preResult11[0]+preResult10[0]
     return color_state1,color_state2

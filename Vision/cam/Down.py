@@ -4,13 +4,11 @@ import sys
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
 if ros_path in sys.path:
-
     sys.path.remove(ros_path)
 
 import cv2
 import numpy as np
 import joblib
-# import matplotlib.pyplot as plt
 import time
 
 model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down3.model'
@@ -77,27 +75,22 @@ with open('./D.json', 'r') as f:
 def read_usb_capture():
     # 选择摄像头的编号
     cap = cv2.VideoCapture(3)
-    
-    # 设置曝光时间,负值是短
-    # cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
-    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE,  3)
 
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+    # 自动曝光
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
     
-    cap.set(10,-15) #0 亮度
+    # cap.set(10,-15) #0 亮度
     cap.set(11,70) #50 对比度
     cap.set(12,64) #64 饱和度
     cap.set(13,0) #0 色调
-    cap.set(14,74) #64 锐度 图像增益
+    cap.set(14,74) #64 锐度
     
-    # 添加这句是可以用鼠标拖动弹出的窗体
-    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
-    frame_num = 0
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
-        frame_num = frame_num + 1
+
         # 真实图
         cv2.rectangle(frame,(point1_x-7,point1_y-7),(point1_x + 7,point1_y + 7),(0,255,0))
         cv2.putText(frame, '1', (point1_x-10, point1_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
@@ -152,13 +145,10 @@ def read_usb_capture():
 
         cv2.rectangle(frame,(point18_x-7,point18_y-7),(point18_x + 7,point18_y + 7),(0,255,0))
         cv2.putText(frame, '18', (point18_x-15, point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-        # cv2.imshow('real_img', frame)
-        # 按下'q'就退出
-        # cv2.waitKey(1)
-        if frame_num > 2:
-            cv2.imwrite(img_path,frame)
-            cap.release()
-            cv2.destroyAllWindows()
+
+        cv2.imwrite(img_path,frame)
+        cap.release()
+        cv2.destroyAllWindows()
     return frame
 
 def img2vector(img):
@@ -171,7 +161,6 @@ def img2vector(img):
 def detect_color():
     st = time.perf_counter()
     img = read_usb_capture()
-    
 
     ROI1 = img[point1_y - 5:point1_y + 5, point1_x - 5:point1_x + 5]
     ROI2 = img[point2_y - 5:point2_y + 5, point2_x - 5:point2_x + 5]
@@ -234,7 +223,6 @@ def detect_color():
     preResult17 = clf.predict(img2arr17)
     preResult18 = clf.predict(img2arr18)
 
-
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
     print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
@@ -243,6 +231,7 @@ def detect_color():
     
     et = time.perf_counter()
     print("spent {:.4f}s.".format((et - st)))
+
     color_state1 = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
     color_state2 = preResult10[0]+preResult11[0]+preResult12[0]+preResult13[0]+preResult14[0]+preResult15[0]+preResult16[0]+preResult17[0]+preResult18[0]
     return color_state1,color_state2
