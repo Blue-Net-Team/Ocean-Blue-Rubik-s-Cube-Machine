@@ -53,7 +53,7 @@ def read_usb_capture():
     cap = cv2.VideoCapture(0)
     
     # 设置曝光时间,负值是短
-    cap.set(cv2.CAP_PROP_EXPOSURE, 1250.0)
+    # cap.set(cv2.CAP_PROP_EXPOSURE, 1250.0)
 
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
@@ -64,8 +64,6 @@ def read_usb_capture():
     cap.set(13,0) #0 色调
     cap.set(14,70) #64 锐度 图像增益
     
-    # 添加这句是可以用鼠标拖动弹出的窗体
-    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
     frame_num = 0
     while(cap.isOpened()):
         # 读取摄像头的画面
@@ -99,9 +97,6 @@ def read_usb_capture():
 
         cv2.rectangle(frame,(point9_x-7,point9_y-7),(point9_x + 7,point9_y + 7),(0,255,0))
         cv2.putText(frame, '9', (point9_x-10, point9_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-        # cv2.imshow('real_img', frame)
-        # 按下'q'就退出
-        # cv2.waitKey(1)
         if frame_num > 2:
             cv2.imwrite(img_path,frame)
             cap.release()
@@ -158,26 +153,6 @@ def detect_color():
  
     et = time.perf_counter()
     print("spent {:.4f}s.".format((et - st)))
-    # plt.subplot(3,3,1)
-    # plt.imshow(ROI1)
-    # plt.subplot(3,3,2)
-    # plt.imshow(ROI2)
-    # plt.subplot(3,3,3)
-    # plt.imshow(ROI3)
-    # plt.subplot(3,3,4)
-    # plt.imshow(ROI4)
-    # plt.subplot(3,3,5)
-    # plt.imshow(ROI5)
-    # plt.subplot(3,3,6)
-    # plt.imshow(ROI6)
-    # plt.subplot(3,3,7)
-    # plt.imshow(ROI7)
-    # plt.subplot(3,3,8)
-    # plt.imshow(ROI8)
-    # plt.subplot(3,3,9)
-    # plt.imshow(ROI9)
-    # plt.imshow(img)
-    # plt.show()
     color_state = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
     return color_state
 

@@ -17,9 +17,9 @@ class ReceiveImg(object):
         """初始化
         * host: 树莓派的IP地址
         * port: 端口号，与树莓派设置的端口号一致"""
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)					# 设置创建socket服务的Client客服务的参数
-        self.client_socket.connect((host, port))												# 连接的主机IP地址和端口
-        self.connection = self.client_socket.makefile('rb')										# 创建一个makefile传输文件，读功能，读数据是b''二进制类型
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)		# 设置创建socket服务的Client客服务的参数
+        self.client_socket.connect((host, port))									# 连接的主机IP地址和端口
+        self.connection = self.client_socket.makefile('rb')							# 创建一个makefile传输文件，读功能，读数据是b''二进制类型
         # need bytes here
         self.stream_bytes = b' '											# 创建一个变量，存放的数据类型是b''二进制类型数据
         
@@ -53,15 +53,24 @@ class ROILocater(object):
     * 用滑块调整ROI的方法
     * 使用鼠标点击就可以记录对应ID的ROI位置的方法
     """
-    def __init__(self, _cap:cv2.VideoCapture|ReceiveImg, num_id:int=9, window_name:str|None=None, savapath:str|None=None) -> None:
+    def __init__(self,
+                 _cap:cv2.VideoCapture|ReceiveImg, 
+                 serface_name:str,
+                 window_name:str|None=None) -> None:
         """
         类初始化
         ----
-        * num_id: ROI的数量，默认为9
-        * window_name: 窗口名称，默认为None，需要使用鼠标点击需要传入窗口名，与imshow的窗口名一致
         * cap_id: 摄像头ID，默认为0
-        * savapath: 保存路径，默认为None
+        * serface_name: 在调整的摄像头对的面，上下左右，对应U, D, L, R
+        * window_name: 窗口名称，默认为None，需要使用鼠标点击需要传入窗口名，与imshow的窗口名一致
         """
+        if serface_name not in ['U', 'D', 'L', 'R']:
+            raise ValueError('serface_name must be in [U, D, L, R]')
+        
+        if serface_name in ['U', 'D']:
+            self.ROInums = 18 - 1
+        elif serface_name in ['L', 'R']:
+            self.ROInums = 9 - 1
         self.x = 0
         self.y = 0
         self.w = 14
@@ -79,11 +88,10 @@ class ROILocater(object):
 
         self.id = 0
 
-        self.savapath = savapath
+        self.savapath = serface_name + '.json'
 
         self.d = dict()
-        self.num_id = num_id-1
-        for i in range(1, self.num_id+2):
+        for i in range(1, self.ROInums+2):
             self.d[i] = {'x': None, 'y': None, 'w': None, 'h': None}
 
         if window_name:
@@ -97,17 +105,17 @@ class ROILocater(object):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.x = x-self.w//2
             self.y = y-self.h//2
+            # 写入字典
             self.d[self.id] = {'x': self.x, 'y': self.y, 'w': self.w, 'h': self.h}
-            self.id += 1
+            # 保存
+            self.save(self.savapath)
             # 更新滑块
             print(f'ID{self.id}, x:{self.x}, y:{self.y} clicked!')
             cv2.setTrackbarPos('x', 'ROI Selector', self.x)
             cv2.setTrackbarPos('y', 'ROI Selector', self.y)
+            self.id += 1
             cv2.setTrackbarPos('ID', 'ROI Selector', self.id)
 
-            # 写入字典
-            # 保存
-            self.save(self.savapath)
 
     def createTrackbar(self):
         """
@@ -124,7 +132,7 @@ class ROILocater(object):
         cv2.createTrackbar('y', 'ROI Selector', self.y, self.max_y, self.callback_y)
         cv2.createTrackbar('w', 'ROI Selector', self.w, self.max_w, self.callback_w)
         cv2.createTrackbar('h', 'ROI Selector', self.h, self.max_h, self.callback_h)
-        cv2.createTrackbar('ID', 'ROI Selector', 1, self.num_id+1, self.callback_ID)
+        cv2.createTrackbar('ID', 'ROI Selector', 1, self.ROInums+1, self.callback_ID)
 
         # 用trackbau充当按钮
         cv2.createTrackbar('OK', 'ROI Selector', 0, 1, self.callback_OK)
@@ -186,7 +194,7 @@ class ROILocater(object):
         else:
             img = _frame
 
-        for i in range(1, self.num_id+2):     # 从1到num_id
+        for i in range(1, self.ROInums+2):     # 从1到num_id
             x = self.d[i]['x']
             y = self.d[i]['y']
             w = self.d[i]['w']
@@ -210,8 +218,8 @@ class ROILocater(object):
 
 if __name__ == '__main__':
     WINDOW_NAME = 'real'
-    reveiver = ReceiveImg('192.168.1.245', 8000)
-    locater = ROILocater(_cap=reveiver, window_name=WINDOW_NAME,savapath='UP.json', num_id=18)
+    reveiver = ReceiveImg('192.168.1.245', 8000) 
+    locater = ROILocater(_cap=reveiver, window_name=WINDOW_NAME, serface_name='L')
     locater.createTrackbar()
 
     cv2.namedWindow(WINDOW_NAME)

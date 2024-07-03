@@ -65,13 +65,7 @@ def read_usb_capture():
     cap.set(13,0) #0 色调
     cap.set(14,64) #64 锐度 图像增益
     frame_num = 0
-    # print(cap.get(10))
-    # print(cap.get(11))
-    # print(cap.get(12))
-    # print(cap.get(13))
-    # print(cap.get(14))
-    # 添加这句是可以用鼠标拖动弹出的窗体
-    # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
+    
     while(cap.isOpened()):
         # 读取摄像头的画面
         ret, frame = cap.read()
