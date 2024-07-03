@@ -91,12 +91,12 @@ def read_usb_capture():
 
     # 设置白平衡
     cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE,  3)
-    cap.set(10,-30) #0 liangdu
-    cap.set(11,90) #50 duibidu
-    cap.set(12,70) #64 baohe
-    cap.set(13,0) #0 sediao
-    cap.set(14,100) #64 ruidu
+    cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
+    cap.set(10,-10) #0 亮度
+    cap.set(11,90) #50 对比的
+    cap.set(12,70) #64 饱和度
+    cap.set(13,0) #0 色调
+    cap.set(14,100) #64 锐度
     
     # 添加这句是可以用鼠标拖动弹出的窗体
     # cv2.namedWindow('real_img', cv2.WINDOW_NORMAL)
