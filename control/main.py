@@ -34,44 +34,52 @@ def restore():
     ----
     收到信号触发"""
     for index, now_step in enumerate(str_data_lst):
-        if len(now_step) != 2:
+        if len(now_step) != 2:      # 确认步骤合法
             oled.fill(0)
             oled.text("Invalid step", 0, 0)
             oled.show()
             print("Invalid step")
             return
-        oled.fill(0)
-        oled.text(f'{now_step}', 0, 10)
-        oled.show()
-        print(now_step)
+        oled.fill(0)                        # 清屏
+        oled.text(f'{now_step}', 0, 10)     # 显示当前步骤
+        oled.show()                         # 显示
+
         sign1 = now_step[0]        # L or R
         sign2 = now_step[1]        # ["1", "2", "3", "O", "C"]
+        
+        # 确认下一步
         try:
-            next_step = str_data_lst[index+1]
+            next1_step = str_data_lst[index+1]
+            try:
+                next2_step = str_data_lst[index+2]
+            except IndexError:
+                next2_step = [None, None]
         except IndexError:
-            next_step = [None, None]
+            next1_step = [None, None]
 
-        if next_step[0]!=sign1:     # 下一步在不同手臂
+        # 调整延迟
+        if next1_step[0]!=sign1:     # 下一步在不同手臂
             # t1:手指张和后的延迟
             # t2:手腕旋转后的延迟
             t1=0.1
-            t2=0.225
-            if next_step[1] in ['1', '2', '3'] and now_step[1] in ['O']:        # [LO,R1,LC]
+            t2=0.2
+            if next1_step[1] in ['1', '2', '3'] and now_step[1] in ['O']:        # [LO,R1,LC]
                 t1=0.07
-            if now_step[1] in ['1', '2', '3'] and next_step[1] in ['C']:
-                t2=0.25
+            if now_step[1] in ['1', '2', '3'] and next1_step[1] in ['C']:
+                t2=0.24
         else:
-            t1=0.16
+            t1=0.13
             t2=0.23
-
+        
+        # 确认左右手
         if sign1 == "L":
             motor = left_motor
             cylinder = left_cylinder
-            
+            _cylinder = right_cylinder
         elif sign1 == "R":
             motor = right_motor
             cylinder = right_cylinder
-
+            _cylinder = left_cylinder
         else:
             oled.fill(0)
             oled.text("Invalid step", 0, 0)
@@ -79,17 +87,26 @@ def restore():
             print("Invalid step")
             return
 
-        if sign2 in ["O", "C"]:
+        # 选择动作
+        if sign2 == 'O' and index == len(str_data_lst)-3:                # 这一步是张手指并且是倒数第三步
+            if next1_step[0] == sign1:      # 下一步在同一手臂
+                if next1_step[1] in ['1','3'] and next2_step[1] in ['C']:
+                    cylinder.open()
+                    _cylinder.open()
+                    time.sleep(1)
+                    motor.rotate('1', 0)
+                    break
+        elif sign2 in ["O", "C"]:
             if sign2 == 'O':
                 cylinder.open()
             if sign2 == "C":
                 cylinder.close()
-            time.sleep(t1)        # 0.15可用 5个压    0.1 6个压测试
+            time.sleep(t1)
         elif sign2 in ['1','2','3']:
             if sign2 in ["1", "3"]:
-                motor.rotate(sign2, 0)     # 5
+                motor.rotate(sign2, 0)
             elif sign2 == "2":
-                motor.rotate(sign2, 0)      # 5
+                motor.rotate(sign2, 0)
             time.sleep(t2)
         else:
             oled.fill(0)
@@ -97,7 +114,6 @@ def restore():
             oled.show()
             print("Invalid step")
             return
-        # input()
         
 
 def read(ser:UART, HEAD:str='@', TAIL:str='#') -> bytes:
