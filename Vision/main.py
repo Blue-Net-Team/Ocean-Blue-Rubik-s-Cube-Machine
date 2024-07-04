@@ -12,10 +12,13 @@ from cam import Down
 
 def crack():
     # 获取魔方颜色状态
+    print('U')
     [color_state2,color_state3] = Up.detect_color()
+    print('R')
     color_state1 = Right.detect_color()
-
+    print('L')
     color_state4 = Left.detect_color()
+    print('D')
     [color_state5,color_state6] = Down.detect_color()
     color_state = color_state3 + color_state1 + color_state2 + color_state6 + color_state4 + color_state5
     color_state = cube_solver.color2view(color_state)
@@ -55,4 +58,5 @@ def crack():
 Transmitter = communication.UART()
 
 if __name__ == '__main__':
+    input("Press 'enter' to continues:")
     crack()
