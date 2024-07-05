@@ -91,10 +91,10 @@ def restore():
         if sign2 == 'O' and index == len(str_data_lst)-3:                # 这一步是张手指并且是倒数第三步
             if next1_step[0] == sign1:      # 下一步在同一手臂
                 if next1_step[1] in ['1','3'] and next2_step[1] in ['C']:
-                    cylinder.open()
                     _cylinder.open()
-                    time.sleep(1)
+                    time.sleep(0.05)
                     motor.rotate('1', 0)
+                    cylinder.open()
                     break
         elif sign2 in ["O", "C"]:
             if sign2 == 'O':
@@ -196,7 +196,7 @@ if __name__ == "__main__":
         # 关闭气源
         gas_switch.value(0)
 
-        time.sleep(1)       # 等待1s
+        time.sleep(10)       # 等待1s
 
         # 关闭两个手指
         left_cylinder.close()
