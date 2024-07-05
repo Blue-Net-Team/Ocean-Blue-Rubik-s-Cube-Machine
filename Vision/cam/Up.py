@@ -10,16 +10,17 @@ import cv2
 import numpy as np
 import joblib
 import time
+from cam.analysis_dad import Cam
 
 
-class UpCam():
-    def __init__(self) -> None:
+class UpCam(Cam):
+    def __init__(self, jsonpath:str='./U.json') -> None:
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_up2.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/U/Ut.png'
         self.clf = joblib.load(model_path) # 加载模型
 
         # 从json文件中读取ROI信息
-        with open('./U.json', 'r') as f:
+        with open(jsonpath, 'r') as f:
             ROI = json.load(f)
             self.point1_x = ROI['1']['x']
             self.point1_y = ROI['1']['y']
@@ -84,11 +85,11 @@ class UpCam():
         # 自动曝光
         cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
         
-        cap.set(10,20) #0 亮度
+        cap.set(10,-15) #0 亮度
         cap.set(11,90) #50 对比度
         cap.set(12,70) #64 饱和度
         cap.set(13,0) #0 色调
-        cap.set(14,100) #64 锐度
+        cap.set(14,50) #64 锐度
         
         while(cap.isOpened()):
             # 读取摄像头的画面
@@ -161,7 +162,7 @@ class UpCam():
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self):
+    def detect_color(self, ifio:bool=False):
         st = time.perf_counter()
         img = self.read_usb_capture()
 
@@ -228,12 +229,13 @@ class UpCam():
 
         img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-        print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
-        print(preResult4,preResult5,preResult6,'  ',preResult13,preResult14,preResult15)
-        print(preResult7,preResult8,preResult9,'  ',preResult16,preResult17,preResult18)
+        if ifio:
+            print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
+            print(preResult4,preResult5,preResult6,'  ',preResult13,preResult14,preResult15)
+            print(preResult7,preResult8,preResult9,'  ',preResult16,preResult17,preResult18)
         
-        et = time.perf_counter()
-        print("spent {:.4f}s.".format((et - st)))
+            et = time.perf_counter()
+            print("spent {:.4f}s.".format((et - st)))
 
         color_state1 = preResult9[0]+preResult8[0]+preResult7[0]+preResult6[0]+preResult5[0]+preResult4[0]+preResult3[0]+preResult2[0]+preResult1[0]
         color_state2 = preResult18[0]+preResult17[0]+preResult16[0]+preResult15[0]+preResult14[0]+preResult13[0]+preResult12[0]+preResult11[0]+preResult10[0]

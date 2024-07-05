@@ -10,16 +10,17 @@ import cv2
 import numpy as np
 import joblib
 import time
+from cam.analysis_dad import Cam
 
 
-class DownCam():
-    def __init__(self) -> None:
+class DownCam(Cam):
+    def __init__(self, jsonpath:str='./D.json') -> None:
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down3.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/D/Dt.png'
         self.clf = joblib.load(model_path) # 加载模型
 
         # 从json文件中读取ROI信息
-        with open('./D.json', 'r') as f:
+        with open(jsonpath, 'r') as f:
             ROI = json.load(f)
             self.point1_x = ROI['1']['x']
             self.point1_y = ROI['1']['y']
@@ -84,17 +85,17 @@ class DownCam():
         # 自动曝光
         cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
         
-        cap.set(10,50) #0 亮度
-        cap.set(11,70) #50 对比度
-        cap.set(12,64) #64 饱和度
+        cap.set(10,15) #0 亮度
+        cap.set(11,80) #50 对比度
+        cap.set(12,70) #64 饱和度
         cap.set(13,0) #0 色调
-        cap.set(14,74) #64 锐度
+        cap.set(14,50) #64 锐度
         
         while(cap.isOpened()):
             # 读取摄像头的画面
             ret, frame = cap.read()
 
-            frame = cv2.GaussianBlur(frame, (3, 3), 0)      # 高斯模糊
+            frame = cv2.medianBlur(frame,5)
 
             # 真实图
             cv2.rectangle(frame,(self.point1_x-7,self.point1_y-7),(self.point1_x + 7,self.point1_y + 7),(0,255,0))
@@ -163,7 +164,7 @@ class DownCam():
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self):
+    def detect_color(self, ifio:bool=False):
         st = time.perf_counter()
         img = self.read_usb_capture()
 
@@ -230,12 +231,13 @@ class DownCam():
 
         img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-        print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
-        print(preResult4,preResult5,preResult6,'  ',preResult13,preResult14,preResult15)
-        print(preResult7,preResult8,preResult9,'  ',preResult16,preResult17,preResult18)
+        if ifio:
+            print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
+            print(preResult4,preResult5,preResult6,'  ',preResult13,preResult14,preResult15)
+            print(preResult7,preResult8,preResult9,'  ',preResult16,preResult17,preResult18)
         
-        et = time.perf_counter()
-        print("spent {:.4f}s.".format((et - st)))
+            et = time.perf_counter()
+            print("spent {:.4f}s.".format((et - st)))
 
         color_state1 = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
         color_state2 = preResult10[0]+preResult11[0]+preResult12[0]+preResult13[0]+preResult14[0]+preResult15[0]+preResult16[0]+preResult17[0]+preResult18[0]
