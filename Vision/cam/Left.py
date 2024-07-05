@@ -72,6 +72,9 @@ class LeftCam(Cam):
             # 读取摄像头的画面
             ret, frame = cap.read()
             
+            if not ret:
+                continue
+
             frame_num = frame_num + 1
             # 真实图
             cv2.rectangle(frame,(self.point1_x-7,self.point1_y-7),(self.point1_x + 7,self.point1_y + 7),(0,255,0))
@@ -127,37 +130,21 @@ class LeftCam(Cam):
         ROI8 = img[self.point8_y - 5:self.point8_y + 5, self.point8_x - 5:self.point8_x + 5]
         ROI9 = img[self.point9_y - 5:self.point9_y + 5, self.point9_x - 5:self.point9_x + 5]
 
-        img2arr1 = self.img2vector(ROI1)
-        img2arr2 = self.img2vector(ROI2)
-        img2arr3 = self.img2vector(ROI3)
-        img2arr4 = self.img2vector(ROI4)
-        img2arr5 = self.img2vector(ROI5)
-        img2arr6 = self.img2vector(ROI6)
-        img2arr7 = self.img2vector(ROI7)
-        img2arr8 = self.img2vector(ROI8)
-        img2arr9 = self.img2vector(ROI9)
+        img2arr_list = list(map(self.img2vector, 
+                                [ROI1, ROI2, ROI3, ROI4, ROI5, ROI6, ROI7, ROI8, ROI9]))
 
 
-        preResult1 = self.clf.predict(img2arr1)
-        preResult2 = self.clf.predict(img2arr2)
-        preResult3 = self.clf.predict(img2arr3)
-        preResult4 = self.clf.predict(img2arr4)
-        preResult5 = self.clf.predict(img2arr5)
-        preResult6 = self.clf.predict(img2arr6)
-        preResult7 = self.clf.predict(img2arr7)
-        preResult8 = self.clf.predict(img2arr8)
-        preResult9 = self.clf.predict(img2arr9)
-
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        results = list(map(self.clf.predict, img2arr_list))
 
         if ifio:
-            print(preResult1,preResult2,preResult3)
-            print(preResult4,preResult5,preResult6)
-            print(preResult7,preResult8,preResult9)
+            print('L')
+            for i in range(3):
+                print(results[i*3],results[i*3+1],results[i*3+2])
     
             et = time.perf_counter()
             print("spent {:.4f}s.".format((et - st)))
-        color_state = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
+        
+        color_state = results[0][0]+results[1][0]+results[2][0]+results[3][0]+results[4][0]+results[5][0]+results[6][0]+results[7][0]+results[8][0]
         return color_state
 
 if __name__ == '__main__':  

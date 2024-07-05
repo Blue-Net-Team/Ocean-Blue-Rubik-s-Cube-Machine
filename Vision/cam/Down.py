@@ -1,5 +1,6 @@
 #!/usr/bin/python3.8
 import json
+from multiprocessing import Pool
 import sys
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
@@ -10,7 +11,10 @@ import cv2
 import numpy as np
 import joblib
 import time
-from cam.analysis_dad import Cam
+try:
+    from cam.analysis_dad import Cam
+except:
+    from analysis_dad import Cam
 
 
 class DownCam(Cam):
@@ -94,6 +98,9 @@ class DownCam(Cam):
         while(cap.isOpened()):
             # 读取摄像头的画面
             ret, frame = cap.read()
+
+            if not ret:
+                continue
 
             frame = cv2.medianBlur(frame,5)
 
@@ -188,61 +195,26 @@ class DownCam(Cam):
         ROI17 = img[self.point17_y - 5:self.point17_y + 5, self.point17_x - 5:self.point17_x + 5]
         ROI18 = img[self.point18_y - 5:self.point18_y + 5, self.point18_x - 5:self.point18_x + 5]
 
-        img2arr1 = self.img2vector(ROI1)
-        img2arr2 = self.img2vector(ROI2)
-        img2arr3 = self.img2vector(ROI3)
-        img2arr4 = self.img2vector(ROI4)
-        img2arr5 = self.img2vector(ROI5)
-        img2arr6 = self.img2vector(ROI6)
-        img2arr7 = self.img2vector(ROI7)
-        img2arr8 = self.img2vector(ROI8)
-        img2arr9 = self.img2vector(ROI9)
+        img2arr_list = list(map(self.img2vector, 
+                                [ROI1, ROI2, ROI3, ROI4, ROI5, ROI6, ROI7, ROI8, ROI9, 
+                                 ROI10, ROI11, ROI12, ROI13, ROI14, ROI15, ROI16, ROI17, ROI18]))
 
-        img2arr10 = self.img2vector(ROI10)
-        img2arr11 = self.img2vector(ROI11)
-        img2arr12 = self.img2vector(ROI12)
-        img2arr13 = self.img2vector(ROI13)
-        img2arr14 = self.img2vector(ROI14)
-        img2arr15 = self.img2vector(ROI15)
-        img2arr16 = self.img2vector(ROI16)
-        img2arr17 = self.img2vector(ROI17)
-        img2arr18 = self.img2vector(ROI18)
-
-        
-        preResult1 = self.clf.predict(img2arr1)
-        preResult2 = self.clf.predict(img2arr2)
-        preResult3 = self.clf.predict(img2arr3)
-        preResult4 = self.clf.predict(img2arr4)
-        preResult5 = self.clf.predict(img2arr5)
-        preResult6 = self.clf.predict(img2arr6)
-        preResult7 = self.clf.predict(img2arr7)
-        preResult8 = self.clf.predict(img2arr8)
-        preResult9 = self.clf.predict(img2arr9)
-
-        preResult10 = self.clf.predict(img2arr10)
-        preResult11 = self.clf.predict(img2arr11)
-        preResult12 = self.clf.predict(img2arr12)
-        preResult13 = self.clf.predict(img2arr13)
-        preResult14 = self.clf.predict(img2arr14)
-        preResult15 = self.clf.predict(img2arr15)
-        preResult16 = self.clf.predict(img2arr16)
-        preResult17 = self.clf.predict(img2arr17)
-        preResult18 = self.clf.predict(img2arr18)
-
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        results = list(map(self.clf.predict, img2arr_list))
 
         if ifio:
-            print(preResult1,preResult2,preResult3,'  ',preResult10,preResult11,preResult12)
-            print(preResult4,preResult5,preResult6,'  ',preResult13,preResult14,preResult15)
-            print(preResult7,preResult8,preResult9,'  ',preResult16,preResult17,preResult18)
+            print('D')
+            for i in range(3):
+                print(results[i*3],results[i*3+1],results[i*3+2],'  ',results[i*3+9],results[i*3+10],results[i*3+11])
         
             et = time.perf_counter()
             print("spent {:.4f}s.".format((et - st)))
 
-        color_state1 = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
-        color_state2 = preResult10[0]+preResult11[0]+preResult12[0]+preResult13[0]+preResult14[0]+preResult15[0]+preResult16[0]+preResult17[0]+preResult18[0]
-        return color_state1,color_state2
+        res = ()
+        for i in range(2):
+            color_state0 = results[i*9][0]+results[i*9+1][0]+results[i*9+2][0]+results[i*9+3][0]+results[i*9+4][0]+results[i*9+5][0]+results[i*9+6][0]+results[i*9+7][0]+results[i*9+8][0]
+            res += (color_state0,)
+        return res
 
 if __name__ == '__main__':  
     Dcam = DownCam()
-    Dcam.detect_color()
+    Dcam.detect_color(True)
