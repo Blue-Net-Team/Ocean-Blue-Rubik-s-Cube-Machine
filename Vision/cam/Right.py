@@ -13,15 +13,16 @@ import numpy as np
 import joblib
 # import matplotlib.pyplot as plt
 import time
+from cam.analysis_dad import Cam
 
-class RightCam():
-    def __init__(self) -> None:
+class RightCam(Cam):
+    def __init__(self, jsonpath:str='./R.json') -> None:
         
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_right.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/R/Rt.png'
         self.clf = joblib.load(model_path) # 加载模
         # 从json文件中读取ROI信息
-        with open('./R.json', 'r') as f:
+        with open(jsonpath, 'r') as f:
             ROI = json.load(f)
             self.point1_x = ROI['1']['x']
             self.point1_y = ROI['1']['y']
@@ -115,7 +116,7 @@ class RightCam():
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self):
+    def detect_color(self, ifio:bool=False):
         st = time.perf_counter()
         img = self.read_usb_capture() 
 
@@ -152,12 +153,13 @@ class RightCam():
 
         img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-        print(preResult1,preResult2,preResult3)
-        print(preResult4,preResult5,preResult6)
-        print(preResult7,preResult8,preResult9)
+        if ifio:
+            print(preResult1,preResult2,preResult3)
+            print(preResult4,preResult5,preResult6)
+            print(preResult7,preResult8,preResult9)
     
-        et = time.perf_counter()
-        print("spent {:.4f}s.".format((et - st)))
+            et = time.perf_counter()
+            print("spent {:.4f}s.".format((et - st)))
         color_state = preResult1[0]+preResult2[0]+preResult3[0]+preResult4[0]+preResult5[0]+preResult6[0]+preResult7[0]+preResult8[0]+preResult9[0]
         return color_state
 
