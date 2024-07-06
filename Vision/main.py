@@ -17,13 +17,13 @@ def main_detect_color(img:cv2.typing.MatLike, _cam:cam.Cam):
     
 
 def crack():
+    t1 = time.perf_counter()
     # 获取魔方颜色状态
     Limg = Lcam.read_usb_capture()
     Rimg = Rcam.read_usb_capture()
     Uimg = Ucam.read_usb_capture()
     Dimg = Dcam.read_usb_capture()
 
-    t1 = time.perf_counter()
     res0 = [
             main_detect_color(Uimg,Ucam),
             main_detect_color(Rimg,Rcam),
