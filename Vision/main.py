@@ -3,7 +3,6 @@ import time
 import communication
 import arm_planning
 import cam
-from multiprocessing import Pool
 import cv2
 
 Ucam = cam.UpCam()
@@ -13,17 +12,8 @@ Rcam = cam.RightCam()
 
 ifio:bool=True
 
-def main_detect_color(img:cv2.typing.MatLike, side:str):
-    if side not in ['U','D','L','R']:
-        raise ValueError('side should be one of U,D,L,R')
-    if side == 'U':
-        return Ucam.detect_color(img, ifio)
-    elif side == 'D': 
-        return Dcam.detect_color(img, ifio)
-    elif side == 'L': 
-        return Lcam.detect_color(img, ifio)
-    elif side == 'R': 
-        return Rcam.detect_color(img, ifio)
+def main_detect_color(img:cv2.typing.MatLike, _cam:cam.Cam):
+    return _cam.detect_color(img, ifio)
     
 
 def crack():
@@ -33,10 +23,13 @@ def crack():
     Uimg = Ucam.read_usb_capture()
     Dimg = Dcam.read_usb_capture()
 
-    sides:list[tuple[cv2.typing.MatLike,str]] = [(Uimg,'U'),(Rimg,'R'),(Limg,'L'),(Dimg,'D')]
     t1 = time.perf_counter()
-    with Pool(4) as p:
-        res0 = p.starmap(main_detect_color, sides)
+    res0 = [
+            main_detect_color(Uimg,Ucam),
+            main_detect_color(Rimg,Rcam),
+            main_detect_color(Limg,Lcam),
+            main_detect_color(Dimg,Dcam)
+            ]
     t2 = time.perf_counter()
     print('detect time:',t2-t1)
 
