@@ -17,6 +17,21 @@ from cam.analysis_dad import Cam
 
 class LeftCam(Cam):
     def __init__(self, jsonpath:str='./L.json'):
+        # 选择摄像头的编号
+        self.cap = cv2.VideoCapture(0)
+        
+        # 设置曝光时间,负值是短
+        # cap.set(cv2.CAP_PROP_EXPOSURE, 1250.0)
+
+        # 设置白平衡
+        self.cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+        
+        self.cap.set(10,0) #0 亮度
+        self.cap.set(11,85) #50 对比度
+        self.cap.set(12,74) #64 饱和度
+        self.cap.set(13,0) #0 色调
+        self.cap.set(14,70) #64 锐度 图像增益
+
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_left4.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/L/L.png'
         self.clf = joblib.load(model_path) # 加载模型
@@ -52,25 +67,10 @@ class LeftCam(Cam):
             self.point9_y = ROI['9']['y']
 
     def read_usb_capture(self):
-        # 选择摄像头的编号
-        cap = cv2.VideoCapture(0)
-        
-        # 设置曝光时间,负值是短
-        # cap.set(cv2.CAP_PROP_EXPOSURE, 1250.0)
-
-        # 设置白平衡
-        cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-        
-        cap.set(10,0) #0 亮度
-        cap.set(11,85) #50 对比度
-        cap.set(12,74) #64 饱和度
-        cap.set(13,0) #0 色调
-        cap.set(14,70) #64 锐度 图像增益
-        
         frame_num = 0
-        while(cap.isOpened()):
+        while(self.cap.isOpened()):
             # 读取摄像头的画面
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             
             if not ret:
                 continue
@@ -105,7 +105,7 @@ class LeftCam(Cam):
             cv2.putText(frame, '9', (self.point9_x-10, self.point9_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
             if frame_num > 2:
                 cv2.imwrite(self.img_path,frame)
-                cap.release()
+                self.cap.release()
                 cv2.destroyAllWindows()
         return frame
 
@@ -116,9 +116,8 @@ class LeftCam(Cam):
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self,ifio:bool=False):
+    def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
-        img = self.read_usb_capture() 
 
         ROI1 = img[self.point1_y - 5:self.point1_y + 5, self.point1_x - 5:self.point1_x + 5]
         ROI2 = img[self.point2_y - 5:self.point2_y + 5, self.point2_x - 5:self.point2_x + 5]
@@ -149,4 +148,5 @@ class LeftCam(Cam):
 
 if __name__ == '__main__':  
     Lcam = LeftCam()
-    Lcam.detect_color()
+    img0 = Lcam.read_usb_capture()
+    Lcam.detect_color(img0)

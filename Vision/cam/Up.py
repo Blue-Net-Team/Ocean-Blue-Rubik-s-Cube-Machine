@@ -1,6 +1,7 @@
 #!/usr/bin/python3.8
 import json
 import sys
+from typing import Tuple
 ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
 
 if ros_path in sys.path:
@@ -18,6 +19,20 @@ except:
 
 class UpCam(Cam):
     def __init__(self, jsonpath:str='./U.json') -> None:
+        # 选择摄像头的编号
+        self.cap = cv2.VideoCapture(1)
+
+        # 设置白平衡
+        self.cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+        # 自动曝光
+        self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
+        
+        self.cap.set(10,-15) #0 亮度
+        self.cap.set(11,90) #50 对比度
+        self.cap.set(12,70) #64 饱和度
+        self.cap.set(13,0) #0 色调
+        self.cap.set(14,50) #64 锐度
+        
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_up2.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/U/Ut.png'
         self.clf = joblib.load(model_path) # 加载模型
@@ -80,28 +95,14 @@ class UpCam(Cam):
             self.point18_y = ROI['18']['y']
             
     def read_usb_capture(self):
-        # 选择摄像头的编号
-        cap = cv2.VideoCapture(1)
-
-        # 设置白平衡
-        cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-        # 自动曝光
-        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
-        
-        cap.set(10,-15) #0 亮度
-        cap.set(11,90) #50 对比度
-        cap.set(12,70) #64 饱和度
-        cap.set(13,0) #0 色调
-        cap.set(14,50) #64 锐度
-        
-        while(cap.isOpened()):
+        while(self.cap.isOpened()):
             # 读取摄像头的画面
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
 
             if not ret:
                 continue
 
-            # 真实图
+            # region 画框
             cv2.rectangle(frame,(self.point1_x-7,self.point1_y-7),(self.point1_x + 7,self.point1_y + 7),(0,255,0))
             cv2.putText(frame, '1', (self.point1_x-10, self.point1_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
@@ -155,9 +156,10 @@ class UpCam(Cam):
 
             cv2.rectangle(frame,(self.point18_x-7,self.point18_y-7),(self.point18_x + 7,self.point18_y + 7),(0,255,0))
             cv2.putText(frame, '18', (self.point18_x-15, self.point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+            # endregion
 
             cv2.imwrite(self.img_path,frame)
-            cap.release()
+            self.cap.release()
             cv2.destroyAllWindows()
         return frame
 
@@ -168,9 +170,8 @@ class UpCam(Cam):
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self, ifio:bool=False):
+    def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
-        img = self.read_usb_capture()
 
         ROI1 = img[self.point1_y - 5:self.point1_y + 5, self.point1_x - 5:self.point1_x + 5]
         ROI2 = img[self.point2_y - 5:self.point2_y + 5, self.point2_x - 5:self.point2_x + 5]
@@ -206,12 +207,13 @@ class UpCam(Cam):
             et = time.perf_counter()
             print("spent {:.4f}s.".format((et - st)))
 
-        res = ()
+        res = tuple()
         for i in range(2):
-            color_state0 = results[i*9][0]+results[i*9+1][0]+results[i*9+2][0]+results[i*9+3][0]+results[i*9+4][0]+results[i*9+5][0]+results[i*9+6][0]+results[i*9+7][0]+results[i*9+8][0]
+            color_state0:str = results[i*9][0]+results[i*9+1][0]+results[i*9+2][0]+results[i*9+3][0]+results[i*9+4][0]+results[i*9+5][0]+results[i*9+6][0]+results[i*9+7][0]+results[i*9+8][0]
             res += (color_state0,)
         return res
 
 if __name__ == '__main__':  
     Ucam = UpCam()
-    Ucam.detect_color(True)
+    img0 = Ucam.read_usb_capture()
+    Ucam.detect_color(img0, True)

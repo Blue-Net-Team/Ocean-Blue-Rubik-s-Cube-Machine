@@ -18,6 +18,20 @@ from cam.analysis_dad import Cam
 class RightCam(Cam):
     def __init__(self, jsonpath:str='./R.json') -> None:
         
+        # 选择摄像头的编号
+        self.cap = cv2.VideoCapture(2)
+        # 设置曝光时间,负值是短
+        # cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
+        self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
+        # 设置白平衡
+        self.cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+        
+        # 摄像头参数，可自行修改
+        self.cap.set(10,-10) #0 亮度
+        self.cap.set(11,50) #50 对比度
+        self.cap.set(12,74) #64 饱和度
+        self.cap.set(13,0) #0 色调
+        self.cap.set(14,64) #64 锐度 图像增益
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_right.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/R/Rt.png'
         self.clf = joblib.load(model_path) # 加载模
@@ -52,26 +66,11 @@ class RightCam(Cam):
             self.point9_y = ROI['9']['y']
 
     def read_usb_capture(self):
-        # 选择摄像头的编号
-        cap = cv2.VideoCapture(2)
-        
-        # 设置曝光时间,负值是短
-        # cap.set(cv2.CAP_PROP_EXPOSURE, -3.9)
-        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
-        # 设置白平衡
-        cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-        
-        # 摄像头参数，可自行修改
-        cap.set(10,-10) #0 亮度
-        cap.set(11,50) #50 对比度
-        cap.set(12,74) #64 饱和度
-        cap.set(13,0) #0 色调
-        cap.set(14,64) #64 锐度 图像增益
         frame_num = 0
         
-        while(cap.isOpened()):
+        while(self.cap.isOpened()):
             # 读取摄像头的画面
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             
             if not ret:
                 continue
@@ -108,7 +107,7 @@ class RightCam(Cam):
             # cv2.waitKey(1)
             if frame_num > 2:
                 cv2.imwrite(self.img_path,frame)
-                cap.release()
+                self.cap.release()
                 cv2.destroyAllWindows()
         return frame
 
@@ -119,9 +118,8 @@ class RightCam(Cam):
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self, ifio:bool=False):
+    def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
-        img = self.read_usb_capture() 
 
         ROI1 = img[self.point1_y-5:self.point1_y + 5, self.point1_x-5:self.point1_x + 5]
         ROI2 = img[self.point2_y-5:self.point2_y + 5, self.point2_x-5:self.point2_x + 5]
@@ -152,4 +150,5 @@ class RightCam(Cam):
 
 if __name__ == '__main__':  
     Rcam = RightCam()
-    Rcam.detect_color()
+    img0 = Rcam.read_usb_capture()
+    Rcam.detect_color(img0)

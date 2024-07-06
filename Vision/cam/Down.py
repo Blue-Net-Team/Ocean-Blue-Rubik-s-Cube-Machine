@@ -19,6 +19,20 @@ except:
 
 class DownCam(Cam):
     def __init__(self, jsonpath:str='./D.json') -> None:
+        # 选择摄像头的编号
+        self.cap = cv2.VideoCapture(3)
+
+        # 设置白平衡
+        self.cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
+        # 自动曝光
+        self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
+        
+        self.cap.set(10,15) #0 亮度
+        self.cap.set(11,80) #50 对比度
+        self.cap.set(12,70) #64 饱和度
+        self.cap.set(13,0) #0 色调
+        self.cap.set(14,50) #64 锐度
+        
         model_path = '/home/lanwang/rubiks-cube-machine/Vision/model/svm_cube_10_10_down3.model'
         self.img_path = '/home/lanwang/rubiks-cube-machine/Vision/pic/D/Dt.png'
         self.clf = joblib.load(model_path) # 加载模型
@@ -81,23 +95,9 @@ class DownCam(Cam):
             self.point18_y = ROI['18']['y']
  
     def read_usb_capture(self):
-        # 选择摄像头的编号
-        cap = cv2.VideoCapture(3)
-
-        # 设置白平衡
-        cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
-        # 自动曝光
-        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
-        
-        cap.set(10,15) #0 亮度
-        cap.set(11,80) #50 对比度
-        cap.set(12,70) #64 饱和度
-        cap.set(13,0) #0 色调
-        cap.set(14,50) #64 锐度
-        
-        while(cap.isOpened()):
+        while(self.cap.isOpened()):
             # 读取摄像头的画面
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
 
             if not ret:
                 continue
@@ -160,7 +160,7 @@ class DownCam(Cam):
             cv2.putText(frame, '18', (self.point18_x-15, self.point18_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
             cv2.imwrite(self.img_path,frame)
-            cap.release()
+            self.cap.release()
             cv2.destroyAllWindows()
         return frame
 
@@ -171,9 +171,8 @@ class DownCam(Cam):
         img_arr2 = np.reshape(img_normlization, (1,-1)) 
         return img_arr2
 
-    def detect_color(self, ifio:bool=False):
+    def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
-        img = self.read_usb_capture()
 
         ROI1 = img[self.point1_y - 5:self.point1_y + 5, self.point1_x - 5:self.point1_x + 5]
         ROI2 = img[self.point2_y - 5:self.point2_y + 5, self.point2_x - 5:self.point2_x + 5]
@@ -217,4 +216,5 @@ class DownCam(Cam):
 
 if __name__ == '__main__':  
     Dcam = DownCam()
-    Dcam.detect_color(True)
+    img0 = Dcam.read_usb_capture()
+    Dcam.detect_color(img0, True)
