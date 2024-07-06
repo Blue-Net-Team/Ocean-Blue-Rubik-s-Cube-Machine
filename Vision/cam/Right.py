@@ -102,13 +102,11 @@ class RightCam(Cam):
 
             cv2.rectangle(frame,(self.point9_x-7,self.point9_y-7),(self.point9_x + 7,self.point9_y + 7),(0,255,0))
             cv2.putText(frame, '9', (self.point9_x-10, self.point9_y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-            # cv2.imshow('real_img', frame)
-            # 按下'q'就退出
-            # cv2.waitKey(1)
-            if frame_num > 2:
-                cv2.imwrite(self.img_path,frame)
-                self.cap.release()
-                cv2.destroyAllWindows()
+
+            cv2.imwrite(self.img_path,frame)
+            self.cap.release()
+            cv2.destroyAllWindows()
+            
         return frame
 
     def img2vector(self, img):
@@ -138,12 +136,15 @@ class RightCam(Cam):
         results = list(map(self.clf.predict, img2arr_list))
 
         if ifio:
-            print('R')
-            for i in range(3):
-                print(results[i*3],results[i*3+1],results[i*3+2])
+            print(f"""
+R
+{results[0]} {results[1]} {results[2]}
+{results[3]} {results[4]} {results[5]}
+{results[6]} {results[7]} {results[8]}
+                  """)
     
             et = time.perf_counter()
-            print("spent {:.4f}s.".format((et - st)))
+            print("R spent {:.4f}s.".format((et - st)))
         
         color_state = results[0][0]+results[1][0]+results[2][0]+results[3][0]+results[4][0]+results[5][0]+results[6][0]+results[7][0]+results[8][0]
         return color_state

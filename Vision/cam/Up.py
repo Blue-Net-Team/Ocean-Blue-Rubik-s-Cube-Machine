@@ -200,12 +200,17 @@ class UpCam(Cam):
         results = list(map(self.clf.predict, img2arr_list))
 
         if ifio:
-            print('U')
-            for i in range(3):
-                print(results[i*3],results[i*3+1],results[i*3+2],'  ',results[i*3+9],results[i*3+10],results[i*3+11])
+            print(f"""
+U
+{results[0]} {results[1]} {results[2]}   {results[9]} {results[10]} {results[11]}
+{results[3]} {results[4]} {results[5]}   {results[12]} {results[13]} {results[14]}
+{results[6]} {results[7]} {results[8]}   {results[15]} {results[16]} {results[17]}
+                  """)
+
+            # print(results[i*3],results[i*3+1],results[i*3+2],'  ',results[i*3+9],results[i*3+10],results[i*3+11])
         
             et = time.perf_counter()
-            print("spent {:.4f}s.".format((et - st)))
+            print("U spent {:.4f}s.".format((et - st)))
 
         res = tuple()
         for i in range(2):
