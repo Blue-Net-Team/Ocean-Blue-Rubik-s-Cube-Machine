@@ -4,6 +4,7 @@ import communication
 import arm_planning
 import cam
 import cv2
+from multiprocessing import Pool
 
 Ucam = cam.UpCam()
 Dcam = cam.DownCam()
@@ -15,20 +16,31 @@ ifio:bool=True
 def main_detect_color(img:cv2.typing.MatLike, _cam:cam.Cam):
     return _cam.detect_color(img, ifio)
     
+def main_read_img(side:str):
+    if side == 'U':
+        return Ucam.read_usb_capture()
+    elif side == 'D':
+        return Dcam.read_usb_capture()
+    elif side == 'L':
+        return Lcam.read_usb_capture()
+    elif side == 'R':
+        return Rcam.read_usb_capture()
+    else:
+        raise ValueError("side must be in ['U','D','L','R']")
 
 def crack():
     t1 = time.perf_counter()
     # 获取魔方颜色状态
-    Limg = Lcam.read_usb_capture()
-    Rimg = Rcam.read_usb_capture()
-    Uimg = Ucam.read_usb_capture()
-    Dimg = Dcam.read_usb_capture()
+    with Pool(4) as p:
+        img_res = p.map(main_read_img,['U','R','L','D'])
+    t2 = time.perf_counter()
+    print(f'read time {t2-t1}')
 
     res0 = [
-            main_detect_color(Uimg,Ucam),
-            main_detect_color(Rimg,Rcam),
-            main_detect_color(Limg,Lcam),
-            main_detect_color(Dimg,Dcam)
+            main_detect_color(img_res[0],Ucam),
+            main_detect_color(img_res[1],Rcam),
+            main_detect_color(img_res[2],Lcam),
+            main_detect_color(img_res[3],Dcam)
             ]
     t2 = time.perf_counter()
     print('detect time:',t2-t1)
