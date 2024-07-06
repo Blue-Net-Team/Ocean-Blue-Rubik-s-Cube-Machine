@@ -6,7 +6,7 @@ import arm_planning
 
 #解算魔方
 def cube_solver(view_state):
-    solve_step = sv.solve(view_state,0,1)
+    solve_step = sv.solve(view_state,19,0.5)
     return solve_step   
 
 #将SVM识别的颜色状态转换成视角状态，blue:U green:D yellow:F white:B orange:R red:L 意思是中心块颜色固定位置，与视角绑定
