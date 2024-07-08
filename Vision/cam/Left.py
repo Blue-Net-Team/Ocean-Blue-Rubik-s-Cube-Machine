@@ -9,12 +9,11 @@ import cv2
 import time
 try:
     from cam.analysis_dad import Cam
-    MODOL_PATH = './Vision/model/svm_cube_10_10_left4.model'
-    IMG_PATH = './Vision/pic/L/L.png'
 except:
     from analysis_dad import Cam
-    MODOL_PATH = './../model/svm_cube_10_10_left4.model'
-    IMG_PATH = './../pic/L/L.png'
+
+MODOL_PATH = './Vision/model/svm_cube_10_10_left4.model'
+IMG_PATH = './Vision/pic/L/L.png'
 
 class LeftCam(Cam):
     def __init__(self, jsonpath:str='./L.json'):
@@ -27,7 +26,7 @@ class LeftCam(Cam):
         # 设置白平衡
         self.cap.set(cv2.CAP_PROP_AUTO_WB, 0.0)
         
-        self.cap.set(10,0) #0 亮度
+        self.cap.set(10,5) #0 亮度
         self.cap.set(11,85) #50 对比度
         self.cap.set(12,74) #64 饱和度
         self.cap.set(13,0) #0 色调
@@ -35,8 +34,8 @@ class LeftCam(Cam):
 
     def read_usb_capture(self):
         img0, img1 = super().read_usb_capture()
-        cv2.imwrite(self.img_path, img0)
-        return img0, img1
+        cv2.imwrite(self.img_path, img1)
+        return img0
 
     def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
@@ -57,5 +56,5 @@ class LeftCam(Cam):
 
 if __name__ == '__main__':  
     Lcam = LeftCam()
-    img0, img1 = Lcam.read_usb_capture()
+    img0 = Lcam.read_usb_capture()
     Lcam.detect_color(img0, True)

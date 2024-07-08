@@ -13,12 +13,11 @@ import joblib
 import time
 try:
     from cam.analysis_dad import Cam
-    MODOL_PATH = './Vision/model/svm_cube_10_10_down3.model'
-    IMG_PATH = './Vision/pic/D/Dt.png'
 except:
     from analysis_dad import Cam
-    MODOL_PATH = './../model/svm_cube_10_10_down3.model'
-    IMG_PATH = './../pic/D/Dt.png'
+
+MODOL_PATH = './Vision/model/svm_cube_10_10_down3.model'
+IMG_PATH = './Vision/pic/D/Dt.png'
 
 
 class DownCam(Cam):
@@ -31,7 +30,7 @@ class DownCam(Cam):
         # 自动曝光
         self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
         
-        self.cap.set(10,30) #0 亮度
+        self.cap.set(10,50) #0 亮度
         self.cap.set(11,80) #50 对比度
         self.cap.set(12,70) #64 饱和度
         self.cap.set(13,0) #0 色调
@@ -39,8 +38,8 @@ class DownCam(Cam):
 
     def read_usb_capture(self):
         img0, img1 = super().read_usb_capture()
-        cv2.imwrite(self.img_path, img0)
-        return img0, img1
+        cv2.imwrite(self.img_path, img1)
+        return img0
 
     def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
@@ -65,5 +64,5 @@ class DownCam(Cam):
 
 if __name__ == '__main__':  
     Dcam = DownCam()
-    img0, img1 = Dcam.read_usb_capture()
+    img0 = Dcam.read_usb_capture()
     Dcam.detect_color(img0, True)

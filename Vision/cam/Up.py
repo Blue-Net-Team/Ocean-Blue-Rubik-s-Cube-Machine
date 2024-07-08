@@ -10,12 +10,11 @@ import cv2
 import time
 try:
     from cam.analysis_dad import Cam
-    MODOL_PATH = './Vision/model/svm_cube_10_10_up2.model'
-    IMG_PATH = './Vision/pic/U/Ut.png'
 except:
     from analysis_dad import Cam
-    MODOL_PATH = './../model/svm_cube_10_10_up2.model'
-    IMG_PATH = './../pic/U/Ut.png'
+
+IMG_PATH = './Vision/pic/U/Ut.png'
+MODOL_PATH = './Vision/model/svm_cube_10_10_up2.model'
 
 
 class UpCam(Cam):
@@ -28,7 +27,7 @@ class UpCam(Cam):
         # 自动曝光
         self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
         
-        self.cap.set(10,-15) #0 亮度
+        self.cap.set(10,10) #0 亮度
         self.cap.set(11,90) #50 对比度
         self.cap.set(12,70) #64 饱和度
         self.cap.set(13,0) #0 色调
@@ -36,8 +35,8 @@ class UpCam(Cam):
             
     def read_usb_capture(self):
         img0, img1 = super().read_usb_capture()
-        cv2.imwrite(self.img_path, img0)
-        return img0, img1
+        cv2.imwrite(self.img_path, img1)
+        return img0
 
     def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
@@ -63,4 +62,4 @@ class UpCam(Cam):
 if __name__ == '__main__':  
     Ucam = UpCam()
     img0 = Ucam.read_usb_capture()
-    # Ucam.detect_color(img0, True)
+    Ucam.detect_color(img0, True)

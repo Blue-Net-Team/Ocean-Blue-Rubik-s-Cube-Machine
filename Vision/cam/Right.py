@@ -9,12 +9,11 @@ import cv2
 import time
 try:
     from cam.analysis_dad import Cam
-    MODOL_PATH = './Vision/model/svm_cube_10_10_right.model'
-    IMG_PATH = './Vision/pic/R/Rt.png'
 except:
     from analysis_dad import Cam
-    MODOL_PATH = './../model/svm_cube_10_10_right.model'
-    IMG_PATH = './../pic/R/Rt.png'
+
+MODOL_PATH = './Vision/model/svm_cube_10_10_right.model'
+IMG_PATH = './Vision/pic/R/Rt.png'
 
 class RightCam(Cam):
     def __init__(self, jsonpath:str='./R.json') -> None:
@@ -36,8 +35,8 @@ class RightCam(Cam):
 
     def read_usb_capture(self):
         img0, img1 = super().read_usb_capture()
-        cv2.imwrite(self.img_path, img0)
-        return img0, img1
+        cv2.imwrite(self.img_path, img1)
+        return img0
     
     def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False):
         st = time.perf_counter()
@@ -58,5 +57,5 @@ class RightCam(Cam):
 
 if __name__ == '__main__':  
     Rcam = RightCam()
-    img0, img1 = Rcam.read_usb_capture()
-    Rcam.detect_color(img0)
+    img0 = Rcam.read_usb_capture()
+    Rcam.detect_color(img0, True)

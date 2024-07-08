@@ -68,7 +68,7 @@ class Cam:
             break
         return frame, img
     
-    def detect_color(self, img:cv2.typing.MatLike) -> list:
+    def detect_color(self, img:cv2.typing.MatLike, ifio:bool=False) -> list:
         """
         使用svm模型检测颜色
         ----
