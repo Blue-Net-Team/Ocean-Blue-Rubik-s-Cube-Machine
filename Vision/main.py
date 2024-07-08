@@ -13,7 +13,7 @@ Rcam = cam.RightCam()
 
 ifio:bool=True
 
-def main_detect_color(img:cv2.typing.MatLike, _cam:cam.Cam):
+def main_detect_color(img:cv2.typing.MatLike, _cam:cam.UpCam|cam.DownCam|cam.LeftCam|cam.RightCam):
     return _cam.detect_color(img, ifio)
     
 def main_read_img(side:str):
@@ -37,10 +37,10 @@ def crack():
     print(f'read time {t2-t1}')
 
     res0 = [
-            main_detect_color(img_res[0],Ucam),
-            main_detect_color(img_res[1],Rcam),
-            main_detect_color(img_res[2],Lcam),
-            main_detect_color(img_res[3],Dcam)
+            main_detect_color(img_res[0][0],Ucam),
+            main_detect_color(img_res[1][0],Rcam),
+            main_detect_color(img_res[2][0],Lcam),
+            main_detect_color(img_res[3][0],Dcam)
             ]
     t2 = time.perf_counter()
     print('detect time:',t2-t1)
