@@ -81,7 +81,7 @@
 - 我们在*Vision*文件夹中编写了*ROIlocater.py*文件，用于快速调整摄像头对各个色块的ROI区域\
 - 我们在*Vision*文件夹中同样编写了Jetson nano 上运行的远程图传文件*Captest.py*，文件的运行需要使用命令行传参，使用*Python Debugger*进行调试的时候需要选择**带有参数的Python文件**，在交互框中协商对应的参数名和参数\
 `--cap 1` 此参数的意义是使用摄像头id为`1`的摄像头进行远程图传。\
-或者直接在命令行直接用Python命令运行Python文件\
+或者直接在命令行直接用Python命令运行Python文件
 
   ```bash
   python Captest.py --cap 1
