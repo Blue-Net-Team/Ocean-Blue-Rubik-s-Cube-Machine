@@ -13,7 +13,10 @@ import numpy as np
 import joblib
 # import matplotlib.pyplot as plt
 import time
-from cam.analysis_dad import Cam
+try:
+    from cam.analysis_dad import Cam
+except:
+    from analysis_dad import Cam
 
 class LeftCam(Cam):
     def __init__(self, jsonpath:str='./L.json'):
@@ -96,4 +99,4 @@ class LeftCam(Cam):
 if __name__ == '__main__':  
     Lcam = LeftCam()
     img0 = Lcam.read_usb_capture()
-    Lcam.detect_color(img0)
+    Lcam.detect_color(img0, True)

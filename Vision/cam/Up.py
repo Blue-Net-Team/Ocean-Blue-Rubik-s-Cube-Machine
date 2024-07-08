@@ -90,6 +90,7 @@ class UpCam(Cam):
         res = tuple()
         for i in range(2):
             color_state0:str = results[i*9][0]+results[i*9+1][0]+results[i*9+2][0]+results[i*9+3][0]+results[i*9+4][0]+results[i*9+5][0]+results[i*9+6][0]+results[i*9+7][0]+results[i*9+8][0]
+            color_state0 = color_state0[::-1]
             res += (color_state0,)
         return res
 

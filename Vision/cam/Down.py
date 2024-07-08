@@ -27,7 +27,7 @@ class DownCam(Cam):
         # 自动曝光
         self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3)
         
-        self.cap.set(10,15) #0 亮度
+        self.cap.set(10,30) #0 亮度
         self.cap.set(11,80) #50 对比度
         self.cap.set(12,70) #64 饱和度
         self.cap.set(13,0) #0 色调
@@ -87,7 +87,7 @@ class DownCam(Cam):
 {results[6]} {results[7]} {results[8]}   {results[15]} {results[16]} {results[17]}""")
 
             et = time.perf_counter()
-            print("U spent {:.4f}s.".format((et - st)))
+            print("D spent {:.4f}s.".format((et - st)))
 
         res = tuple()
         for i in range(2):
