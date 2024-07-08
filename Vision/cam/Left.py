@@ -33,6 +33,11 @@ class LeftCam(Cam):
         self.cap.set(14,70) #64 锐度 图像增益
 
     def read_usb_capture(self):
+        """
+        从摄像头读取图像，并且将原图像进行保存
+        ----
+        * 返回值 img0: 读取的图像
+        """
         img0, img1 = super().read_usb_capture()
         cv2.imwrite(self.img_path, img1)
         return img0
