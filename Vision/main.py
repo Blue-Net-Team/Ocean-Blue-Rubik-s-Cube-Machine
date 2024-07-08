@@ -65,12 +65,8 @@ def crack():
     print("the optimize step is:",real_solve)
     print("--------------------------------------------")
     print("arm_step:",arm_step)
-    step_str = ''
-    for index,i in enumerate(arm_step):
-        if index != len(arm_step) - 1:
-            step_str += i + ' '
-        else:
-            step_str += i
+    
+    step_str = ' '.join(arm_step)
 
     Transmitter.write(step_str)
     
